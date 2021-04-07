@@ -6,32 +6,10 @@ from ultils.transfroms import Rotate_Image, RGB_ToTensor, Normalization
 from torch.utils.data import DataLoader
 from torchvision import transforms
 from torch import nn, optim
+import argparse as argparse
 
-df_train_path = "/content/data_processed/train.csv"
-df_test_path = "/content/data_processed/val.csv"
-data_root_path="/content/data_processed/crop"
 
-cnn_normalization_mean = torch.tensor([0.485, 0.456, 0.406])
-cnn_normalization_std = torch.tensor([0.229, 0.224, 0.225])
-
-train_transforms = transforms.Compose([
-                                Rotate_Image(),
-                                RGB_ToTensor(),
-                                Normalization(cnn_normalization_mean, cnn_normalization_std)])
-
-test_transforms = transforms.Compose([
-                                RGB_ToTensor(),
-                                Normalization(cnn_normalization_mean, cnn_normalization_std)])
-
-train_dataset = ImdbDataset(dataframe_path=df_train_path, data_root_path=data_root_path, transform=train_transforms)
-train_dataset = ImdbDataset(dataframe_path=df_test_path, data_root_path=data_root_path, transform=test_transforms)
-
-train_dataloader = DataLoader(train_dataset,batch_size=50, shuffle=True, num_workers=4)
-test_dataloader = DataLoader(train_dataset, batch_size=50, shuffle=True, num_workers=4)
-
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-def train_model(model, criterion1, criterion2, optimizer, n_epochs=25):
+def train_model(model,train_dataloader, test_dataloader, device, criterion1, criterion2, optimizer, n_epochs=25):
     """returns trained model"""
     # initialize tracker for minimum validation loss
     valid_loss_min = np.Inf
@@ -99,12 +77,61 @@ def train_model(model, criterion1, criterion2, optimizer, n_epochs=25):
     # return trained model
     return model
 
-#Setting model and moving to device
-model = inception_V3().to(device)
-#For binary output:gender
-criterion_binary= nn.BCELoss()
-#For multilabel output: race and age
-criterion_multioutput = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.001, amsgrad=True)
 
-model_history =train_model(model, criterion_multioutput, criterion_binary, optimizer)
+def main(df_train_path, df_test_path,data_root_path,learning_rate, epochs):
+
+    cnn_normalization_mean = torch.tensor([0.485, 0.456, 0.406])
+    cnn_normalization_std = torch.tensor([0.229, 0.224, 0.225])
+
+    train_transforms = transforms.Compose([
+                                    Rotate_Image(),
+                                    RGB_ToTensor(),
+                                    Normalization(cnn_normalization_mean, cnn_normalization_std)])
+
+    test_transforms = transforms.Compose([
+                                    RGB_ToTensor(),
+                                    Normalization(cnn_normalization_mean, cnn_normalization_std)])
+
+    train_dataset = ImdbDataset(dataframe_path=df_train_path, data_root_path=data_root_path, transform=train_transforms)
+    test_dataset = ImdbDataset(dataframe_path=df_test_path, data_root_path=data_root_path, transform=test_transforms)
+
+    train_dataloader = DataLoader(train_dataset,batch_size=50, shuffle=True, num_workers=4)
+    test_dataloader = DataLoader(test_dataset, batch_size=50, shuffle=True, num_workers=4)
+
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+
+    #Setting model and moving to device
+    model = inception_V3().to(device)
+    #For binary output:gender
+    criterion_binary= nn.BCELoss()
+    #For multilabel output: race and age
+    criterion_multioutput = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(model.parameters(), lr=learning_rate, amsgrad=True)
+
+    model_history =train_model(model,
+                               train_dataloader,
+                               test_dataloader,
+                               device,
+                               criterion_multioutput,
+                               criterion_binary,
+                               optimizer,
+                               n_epochs=epochs)
+
+    return model_history
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--dftrain-path', required=True)
+    parser.add_argument('--dftest-path', required=True)
+    parser.add_argument('--dtroot-path', required=True)
+    args = parser.parse_args()
+
+    learning_rate = 0.001
+    epochs= 50
+
+    model_history = main(df_train_path=args.dftrain_path,
+                         df_test_path=args.dftest_path,
+                         data_root_path=args.dtroot_path,
+                         learning_rate=learning_rate,
+                         epochs=epochs)

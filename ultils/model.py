@@ -20,15 +20,16 @@ class Densenet(nn.Module):
         super(Densenet, self).__init__()
         self.model = models.densenet121(pretrained=True)
         num_ftrs = self.model.classifier.in_features
-        self.fc = nn.Linear(num_ftrs, 100)  # For age class
-        self.fc1 = nn.Linear(num_ftrs, 2)  # For gender class
+        self.classifier = nn.Linear(num_ftrs, 100)  # For age class
+        self.classifier2 = nn.Linear(num_ftrs, 2)  # For gender class
 
     def forward(self, x):
-        label1 = self.fc1(x)
-        label2 = torch.sigmoid(self.fc2(x))
+        label1 = self.classifier(x)
+        label2 = torch.sigmoid(self.classifier2(x))
 
         return {'label1': label1, 'label2': label2}
 
 if __name__ == '__main__':
+    from torchsummary import summary
     model = Densenet()
-    print(model)
+    summary(model, input_size=(3, 224, 224))

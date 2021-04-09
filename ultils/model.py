@@ -31,3 +31,4 @@ class Densenet(nn.Module):
 
 if __name__ == '__main__':
     model = Densenet()
+    print(model)

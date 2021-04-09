@@ -32,7 +32,8 @@ class Rotate_Image(object):
 class RGB_ToTensor(object):
     def __call__(self, sample):
         image, label1, label2= sample['image'], sample['label_age'], sample['label_gender']
-        image = torch.from_numpy(image).unsqueeze_(0).repeat(3, 1, 1)
+        image = torch.from_numpy(image)
+        image = image.permute(2,0,1)
         label1 = torch.from_numpy(label1)
         label2 = torch.from_numpy(label2)
 
@@ -52,3 +53,13 @@ class Normalization(object):
         return {'image': image,
                 'label_age': label1,
                 'label_gender': label2}
+
+if __name__ == '__main__':
+    x = np.ones((224,224,3))
+    y1 = np.array([10])
+    y2 = np.array([1])
+    sample = {'image': x,
+              'label_age': y1,
+              'label_gender': y2}
+    sample_tensor = RGB_ToTensor()(sample)
+    print(sample_tensor['image'].size())

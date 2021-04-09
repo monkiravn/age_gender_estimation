@@ -30,7 +30,7 @@ class ImdbDataset(Dataset):
 
     def __getitem__(self, idx):
         if torch.is_tensor(idx):
-          idx = index.tolist()
+          idx = idx.tolist()
         image_path = os.path.join(self.data_root,self.x.iloc[idx])
         image = Image.open(image_path)
         image = np.array(image).astype('float')

@@ -95,8 +95,8 @@ def main(df_train_path, df_test_path,data_root_path,learning_rate, epochs):
     train_dataset = ImdbDataset(dataframe_path=df_train_path, data_root_path=data_root_path, transform=train_transforms)
     test_dataset = ImdbDataset(dataframe_path=df_test_path, data_root_path=data_root_path, transform=test_transforms)
 
-    train_dataloader = DataLoader(train_dataset,batch_size=50, shuffle=True, num_workers=4)
-    test_dataloader = DataLoader(test_dataset, batch_size=50, shuffle=True, num_workers=4)
+    train_dataloader = DataLoader(train_dataset,batch_size=50, shuffle=True, num_workers=2)
+    test_dataloader = DataLoader(test_dataset, batch_size=50, shuffle=True, num_workers=2)
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 

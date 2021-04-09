@@ -43,7 +43,7 @@ def get_meta(db):
     return full_path, dob, gender, photo_taken, face_score, second_face_score, age
 
 
-def main(input_db, photo_dir, output_dir, min_score=1.0, img_size=165, split_ratio=0.8):
+def main(input_db, photo_dir, output_dir, min_score=1.0, img_size=224, split_ratio=0.8):
     """
     Takes imdb dataset db and performs processing such as cropping and quality checks, writing output to a csv.
 
@@ -132,7 +132,6 @@ if __name__ == '__main__':
     parser.add_argument('--output-dir', required=True)
     parser.add_argument('--min-score', required=False, type=float, default=1.0)
     parser.add_argument('--img-size', type=int, required=False, default=224)
-    parser.add_argument('--split-ratio', type=float, required=False, default=0.8)
 
     args = parser.parse_args()
 

@@ -104,9 +104,9 @@ def main(df_train_path, df_test_path,data_root_path,learning_rate, epochs):
     #Setting model and moving to device
     model = Resnet().to(device)
     #For binary output:gender
-    criterion_binary= nn.BCELoss()
+    criterion_binary= nn.NLLLoss()
     #For multilabel output: race and age
-    criterion_multioutput = nn.CrossEntropyLoss()
+    criterion_multioutput = nn.NLLLoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate, amsgrad=True)
 
     model_history =train_model(model,

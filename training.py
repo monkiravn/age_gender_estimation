@@ -194,7 +194,7 @@ if __name__ == '__main__':
     parser.add_argument('--dtroot-path', required=True)
     args = parser.parse_args()
 
-    learning_rate = 0.001
+    learning_rate = 0.005
     epochs= 50
     batch_size = 256
 

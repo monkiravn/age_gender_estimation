@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 from ultils.datasets import ImdbDataset
-from ultils.model import inception_V3, Densenet
+from ultils.model import inception_V3, Densenet, Resnet
 from ultils.transfroms import Rotate_Image, RGB_ToTensor, Normalization
 from torch.utils.data import DataLoader
 from torchvision import transforms
@@ -102,7 +102,7 @@ def main(df_train_path, df_test_path,data_root_path,learning_rate, epochs):
 
 
     #Setting model and moving to device
-    model = Densenet().to(device)
+    model = Resnet().to(device)
     #For binary output:gender
     criterion_binary= nn.BCELoss()
     #For multilabel output: race and age

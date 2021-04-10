@@ -73,15 +73,15 @@ def train_model(model,train_dataloader, test_dataloader, device, criterion1, cri
                 running_age_acc = 0.0
                 running_gender_acc = 0.0
 
-            train_loss.append(epoch_loss/len(train_dataloader))
-            train_age_acc.append(epoch_age_acc/len(train_dataloader))
-            train_age_mae.append(epoch_age_mae/len(train_dataloader))
-            train_gender_acc.append(epoch_gender_acc/len(train_dataloader))
+        train_loss.append(epoch_loss/len(train_dataloader))
+        train_age_acc.append(epoch_age_acc/len(train_dataloader))
+        train_age_mae.append(epoch_age_mae/len(train_dataloader))
+        train_gender_acc.append(epoch_gender_acc/len(train_dataloader))
 
-            epoch_loss = 0.0
-            epoch_age_mae = 0.0
-            epoch_age_acc = 0.0
-            epoch_gender_acc = 0.0
+        epoch_loss = 0.0
+        epoch_age_mae = 0.0
+        epoch_age_acc = 0.0
+        epoch_gender_acc = 0.0
 
         # validate the model #
         model.eval()
@@ -116,15 +116,15 @@ def train_model(model,train_dataloader, test_dataloader, device, criterion1, cri
                 epoch_val_age_mae += age_Accuracy.item()
                 epoch_val_gender_acc += gender_Accuracy.item()
 
-                val_loss.append(epoch_val_loss / len(test_dataloader))
-                val_age_acc.append(epoch_val_age_acc / len(test_dataloader))
-                val_age_mae.append(epoch_val_age_mae / len(test_dataloader))
-                val_gender_acc.append(epoch_val_gender_acc / len(test_dataloader))
+            val_loss.append(epoch_val_loss / len(test_dataloader))
+            val_age_acc.append(epoch_val_age_acc / len(test_dataloader))
+            val_age_mae.append(epoch_val_age_mae / len(test_dataloader))
+            val_gender_acc.append(epoch_val_gender_acc / len(test_dataloader))
 
-                epoch_val_loss = 0.0
-                epoch_val_age_acc = 0.0
-                epoch_val_age_mae = 0.0
-                epoch_val_gender_acc = 0.0
+            epoch_val_loss = 0.0
+            epoch_val_age_acc = 0.0
+            epoch_val_age_mae = 0.0
+            epoch_val_gender_acc = 0.0
 
         # print training/validation statistics
         print('*****\nEpoch: {} \nTraining Loss: {:.6f} \tTrain Age MAE: {:.4f} \tTrain Age Accuracy: {:.4f} '

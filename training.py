@@ -76,8 +76,8 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                 running_age_acc += age_Accuracy.item()
                 running_gender_acc += gender_Accuracy.item()
                 epoch_loss += loss.item()
-                epoch_age_acc += age_MAE.item()
-                epoch_age_mae += age_Accuracy.item()
+                epoch_age_acc += age_Accuracy.item()
+                epoch_age_mae += age_MAE.item()
                 epoch_gender_acc += gender_Accuracy.item()
 
                 if batch_idx % 50 == 0:
@@ -127,8 +127,8 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                     loss = loss1 + loss2
 
                     epoch_val_loss += loss.item()
-                    epoch_val_age_acc += age_MAE.item()
-                    epoch_val_age_mae += age_Accuracy.item()
+                    epoch_val_age_acc += age_Accuracy.item()
+                    epoch_val_age_mae += age_MAE.item()
                     epoch_val_gender_acc += gender_Accuracy.item()
 
                 val_loss.append(epoch_val_loss / len(test_dataloader))
@@ -239,8 +239,8 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                 running_age_acc += age_Accuracy.item()
                 running_gender_acc += gender_Accuracy.item()
                 epoch_loss += loss.item()
-                epoch_age_acc += age_MAE.item()
-                epoch_age_mae += age_Accuracy.item()
+                epoch_age_acc += age_Accuracy.item()
+                epoch_age_mae += age_MAE.item()
                 epoch_gender_acc += gender_Accuracy.item()
 
                 if batch_idx % 50 == 0:
@@ -291,8 +291,8 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                     loss = loss1 + loss2
 
                     epoch_val_loss += loss.item()
-                    epoch_val_age_acc += age_MAE.item()
-                    epoch_val_age_mae += age_Accuracy.item()
+                    epoch_val_age_acc += age_Accuracy.item()
+                    epoch_val_age_mae += age_MAE.item()
                     epoch_val_gender_acc += gender_Accuracy.item()
 
                 val_loss.append(epoch_val_loss / len(test_dataloader))

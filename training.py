@@ -30,8 +30,8 @@ def train_model(model,train_dataloader, test_dataloader, device, criterion1, cri
             label2_hat = output['label2'].cuda()
 
             # calculate loss
-            loss1 = criterion1(label1_hat, label1.squeeze().type(torch.LongTensor))
-            loss2 = criterion2(label2_hat, label2.squeeze().type(torch.LongTensor))
+            loss1 = criterion1(label1_hat, label1.squeeze())
+            loss2 = criterion2(label2_hat, label2.squeeze())
 
             loss = loss1 + loss2
 
@@ -49,7 +49,7 @@ def train_model(model,train_dataloader, test_dataloader, device, criterion1, cri
         model.eval()
         with torch.no_grad():
             for batch_idx, sample_batched in enumerate(test_dataloader):
-                image, label1, label2, label3 = sample_batched['image'].to(device,dtype=torch.float), \
+                image, label1, label2 = sample_batched['image'].to(device,dtype=torch.float), \
                                                 sample_batched['label_age'].to(device,dtype=torch.float), \
                                                 sample_batched['label_gender'].to(device,dtype=torch.float)
                 output = model(image)
@@ -57,8 +57,8 @@ def train_model(model,train_dataloader, test_dataloader, device, criterion1, cri
                 label2_hat = output['label2'].cuda()
 
                 # calculate loss
-                loss1 = criterion1(label1_hat, label1.squeeze().type(torch.LongTensor))
-                loss2 = criterion2(label2_hat, label2.squeeze().type(torch.LongTensor))
+                loss1 = criterion1(label1_hat, label1.squeeze())
+                loss2 = criterion2(label2_hat, label2.squeeze())
 
                 loss = loss1 + loss2
                 valid_loss = valid_loss + ((1 / (batch_idx + 1)) * (loss.data - valid_loss))

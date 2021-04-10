@@ -408,9 +408,10 @@ if __name__ == '__main__':
     parser.add_argument('--dftest-path', required=True)
     parser.add_argument('--dtroot-path', required=True)
     parser.add_argument('--mdsave-path', required=True)
-    parser.add_argument('--continues', type=bool, required=False, default=False)
+    parser.add_argument('--continues', required=False, default="No")
     args = parser.parse_args()
-
+    if args.continues == "yes" or "Yes" or "YES": continous_training = True
+    else: continous_training = False
     learning_rate = 0.005
     epochs= 50
     batch_size = 256
@@ -422,4 +423,4 @@ if __name__ == '__main__':
                          learning_rate=learning_rate,
                          epochs=epochs,
                          batch_size= batch_size,
-                         continous_training=args.continues)
+                         continous_training=continous_training)

@@ -44,9 +44,8 @@ class Resnet(nn.Module):
         bs, _, _, _ = x.shape
         x = self.features(x)
         x = F.adaptive_avg_pool2d(x, 1).reshape(bs, -1)
-        label1 = self.fc1(x)
-        label1 = self.apply_log_soft(label1)
-        label2 = torch.sigmoid(self.fc2(x))
+        label1 = self.apply_log_soft(self.fc1(x))
+        label2 = self.apply_log_soft(self.fc2(x))
         return {'label1': label1, 'label2': label2}
 
 if __name__ == '__main__':

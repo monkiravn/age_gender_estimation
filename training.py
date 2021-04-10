@@ -63,7 +63,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                 loss1 = criterion1(label1_hat, label1.squeeze())
                 loss2 = criterion2(label2_hat, label2.squeeze())
 
-                loss = loss1 + loss2
+                loss = 3*loss1 + loss2
 
                 # back prop
                 loss.backward()
@@ -124,7 +124,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                     loss1 = criterion1(label1_hat, label1.squeeze())
                     loss2 = criterion2(label2_hat, label2.squeeze())
 
-                    loss = loss1 + loss2
+                    loss = 3*loss1 + loss2
 
                     epoch_val_loss += loss.item()
                     epoch_val_age_acc += age_Accuracy.item()
@@ -226,7 +226,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                 loss1 = criterion1(label1_hat, label1.squeeze())
                 loss2 = criterion2(label2_hat, label2.squeeze())
 
-                loss = loss1 + loss2
+                loss = 3*loss1 + loss2
 
                 # back prop
                 loss.backward()
@@ -288,7 +288,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                     loss1 = criterion1(label1_hat, label1.squeeze())
                     loss2 = criterion2(label2_hat, label2.squeeze())
 
-                    loss = loss1 + loss2
+                    loss = 3*loss1 + loss2
 
                     epoch_val_loss += loss.item()
                     epoch_val_age_acc += age_Accuracy.item()
@@ -410,7 +410,7 @@ if __name__ == '__main__':
     parser.add_argument('--mdsave-path', required=True)
     parser.add_argument('--continues', type=lambda x: (str(x).lower() in ['true','1', 'yes']), required=False, default=False)
     args = parser.parse_args()
-    learning_rate = 0.005
+    learning_rate = 0.01
     epochs= 50
     batch_size = 256
 

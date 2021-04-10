@@ -165,9 +165,9 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
 
             # save the best model
             if val_loss[-1] < valid_loss_min:
-                valid_loss_min = val_loss[-1]
                 print('Validation loss decreased ({:.6f} --> {:.6f}).  Saving model ...'.format(
                     valid_loss_min,val_loss[-1]))
+                valid_loss_min = val_loss[-1]
                 torch.save({'epoch': epoch + 1,
                             'model_state_dict': model.state_dict(),
                             'optimizer_state_dict': optimizer.state_dict(),

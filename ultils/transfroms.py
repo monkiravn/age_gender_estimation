@@ -33,12 +33,14 @@ class RGB_ToTensor(object):
     def __call__(self, sample):
         image, label1, label2= sample['image'], sample['label_age'], sample['label_gender']
         image = torch.from_numpy(image)
+        image = image.permute(2,0,1)
         label1 = torch.from_numpy(label1)
         label2 = torch.from_numpy(label2)
 
         return {'image': image,
                 'label_age': label1,
                 'label_gender': label2}
+
 
 
 class Normalization(object):

@@ -20,8 +20,8 @@ def train_model(model,train_dataloader, test_dataloader, device, criterion1, cri
         model.train()
         for batch_idx, sample_batched in enumerate(train_dataloader):
             # importing data and moving to GPU
-            image, label1, label2= sample_batched['image'].to(device), sample_batched['label_age'].to(device),  \
-                                   sample_batched['label_gender'].to(device)
+            image, label1, label2= sample_batched['image'].to(device,dtype=torch.float), sample_batched['label_age'].to(device,dtype=torch.float),  \
+                                   sample_batched['label_gender'].to(device,dtype=torch.float)
 
             # zero the parameter gradients
             optimizer.zero_grad()
@@ -49,9 +49,9 @@ def train_model(model,train_dataloader, test_dataloader, device, criterion1, cri
         model.eval()
         with torch.no_grad():
             for batch_idx, sample_batched in enumerate(test_dataloader):
-                image, label1, label2, label3 = sample_batched['image'].to(device), \
-                                                sample_batched['label_age'].to(device), \
-                                                sample_batched['label_gender'].to(device)
+                image, label1, label2, label3 = sample_batched['image'].to(device,dtype=torch.float), \
+                                                sample_batched['label_age'].to(device,dtype=torch.float), \
+                                                sample_batched['label_gender'].to(device,dtype=torch.float)
                 output = model(image)
                 label1_hat = output['label1']
                 label2_hat = output['label2']

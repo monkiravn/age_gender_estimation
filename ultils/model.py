@@ -34,13 +34,14 @@ class Densenet(nn.Module):
 class Resnet(nn.Module):
     def __init__(self):
         super(Resnet, self).__init__()
-        self.model = models.resnet34(pretrained="True")
+        original_model = models.resnet34(pretrained="True")
+        self.features = nn.Sequential(*list(original_model.children())[:-2])
         self.fc1 = nn.Linear(512, 100)  # For age class
         self.fc2 = nn.Linear(512, 2)  # For gender class
 
     def forward(self, x):
         bs, _, _, _ = x.shape
-        x = self.model.features(x)
+        x = self.features(x)
         x = F.adaptive_avg_pool2d(x, 1).reshape(bs, -1)
         label1 = self.fc1(x)
         label2 = torch.sigmoid(self.fc2(x))

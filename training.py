@@ -48,7 +48,7 @@ def train_model(model,train_dataloader, test_dataloader, device, criterion1, cri
             loss1 = criterion1(label1_hat, label1.squeeze())
             loss2 = criterion2(label2_hat, label2.squeeze())
 
-            loss = loss1 + 6.1*loss2
+            loss = loss1 + loss2
 
             # back prop
             loss.backward()
@@ -109,7 +109,7 @@ def train_model(model,train_dataloader, test_dataloader, device, criterion1, cri
                 loss1 = criterion1(label1_hat, label1.squeeze())
                 loss2 = criterion2(label2_hat, label2.squeeze())
 
-                loss = loss1 + 6.1*loss2
+                loss = loss1 + loss2
 
                 epoch_val_loss += loss.item()
                 epoch_val_age_acc += age_MAE.item()

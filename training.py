@@ -26,8 +26,8 @@ def train_model(model,train_dataloader, test_dataloader, device, criterion1, cri
             # zero the parameter gradients
             optimizer.zero_grad()
             output = model(image)
-            label1_hat = output['label1'].to(device, dtype=torch.LongTensor)
-            label2_hat = output['label2'].to(device, dtype=torch.LongTensor)
+            label1_hat = output['label1'].to(device, dtype=torch.float)
+            label2_hat = output['label2'].to(device, dtype=torch.float)
 
             # calculate loss
             loss1 = criterion1(label1_hat, label1.squeeze().type(torch.LongTensor))
@@ -53,8 +53,8 @@ def train_model(model,train_dataloader, test_dataloader, device, criterion1, cri
                                                 sample_batched['label_age'].to(device,dtype=torch.float), \
                                                 sample_batched['label_gender'].to(device,dtype=torch.float)
                 output = model(image)
-                label1_hat = output['label1'].to(device,dtype=torch.LongTensor)
-                label2_hat = output['label2'].to(device,dtype=torch.LongTensor)
+                label1_hat = output['label1'].to(device,dtype=torch.float)
+                label2_hat = output['label2'].to(device,dtype=torch.float)
 
                 # calculate loss
                 loss1 = criterion1(label1_hat, label1.squeeze().type(torch.LongTensor))

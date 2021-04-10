@@ -50,4 +50,6 @@ class Resnet(nn.Module):
 if __name__ == '__main__':
     from torchsummary import summary
     model = Resnet()
+    if torch.cuda.is_available():
+        model.cuda()
     summary(model, input_size=(3, 224, 224))

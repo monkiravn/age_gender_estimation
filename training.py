@@ -78,7 +78,7 @@ def train_model(model,train_dataloader, test_dataloader, device, criterion1, cri
     return model
 
 
-def main(df_train_path, df_test_path,data_root_path,learning_rate, epochs):
+def main(df_train_path, df_test_path,data_root_path,learning_rate, epochs, batch_size):
 
     cnn_normalization_mean = torch.tensor([0.485, 0.456, 0.406])
     cnn_normalization_std = torch.tensor([0.229, 0.224, 0.225])
@@ -95,8 +95,8 @@ def main(df_train_path, df_test_path,data_root_path,learning_rate, epochs):
     train_dataset = ImdbDataset(dataframe_path=df_train_path, data_root_path=data_root_path, transform=train_transforms)
     test_dataset = ImdbDataset(dataframe_path=df_test_path, data_root_path=data_root_path, transform=test_transforms)
 
-    train_dataloader = DataLoader(train_dataset,batch_size=50, shuffle=True, num_workers=2)
-    test_dataloader = DataLoader(test_dataset, batch_size=50, shuffle=True, num_workers=2)
+    train_dataloader = DataLoader(train_dataset,batch_size=batch_size, shuffle=True, num_workers=2)
+    test_dataloader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True, num_workers=2)
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -129,9 +129,11 @@ if __name__ == '__main__':
 
     learning_rate = 0.001
     epochs= 50
+    batch_size = 1024
 
     model_history = main(df_train_path=args.dftrain_path,
                          df_test_path=args.dftest_path,
                          data_root_path=args.dtroot_path,
                          learning_rate=learning_rate,
-                         epochs=epochs)
+                         epochs=epochs,
+                         batch_size= batch_size)

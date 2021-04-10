@@ -36,6 +36,7 @@ class Resnet(nn.Module):
         super(Resnet, self).__init__()
         original_model = models.resnet34(pretrained="True")
         self.features = nn.Sequential(*list(original_model.children())[:-2])
+        self.apply_log_soft = nn.LogSoftmax(dim=1)
         self.fc1 = nn.Linear(512, 100)  # For age class
         self.fc2 = nn.Linear(512, 2)  # For gender class
 
@@ -44,6 +45,7 @@ class Resnet(nn.Module):
         x = self.features(x)
         x = F.adaptive_avg_pool2d(x, 1).reshape(bs, -1)
         label1 = self.fc1(x)
+        label1 = self.apply_log_soft(label1)
         label2 = torch.sigmoid(self.fc2(x))
         return {'label1': label1, 'label2': label2}
 

@@ -185,7 +185,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
             pd_dict = {'loss': train_loss, 'train_age_mae': train_age_mae, 'train_age_acc': train_age_acc, 'train_gender_acc': train_gender_acc,
                        'val_loss': val_loss, 'val_age_mae': val_age_mae,'val_age_acc': val_age_acc,'val_gender_acc': val_gender_acc}
             stat = pd.DataFrame(pd_dict)
-            stat.to_csv(os.path.join(model_save_path, 'losses_metrics.csv'), index=False)
+            stat.to_csv(os.path.join(model_save_path, 'losses_metrics.csv'))
 
             scheduler.step()
     else:
@@ -351,7 +351,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                        'val_loss': val_loss, 'val_age_mae': val_age_mae, 'val_age_acc': val_age_acc,
                        'val_gender_acc': val_gender_acc}
             stat = pd.DataFrame(pd_dict)
-            stat.to_csv(os.path.join(model_save_path, 'losses_metrics.csv'), index=False)
+            stat.to_csv(os.path.join(model_save_path, 'losses_metrics.csv'))
             # decay learning rate
             scheduler.step()
     # return trained model
@@ -411,7 +411,7 @@ if __name__ == '__main__':
     parser.add_argument('--continues', type=lambda x: (str(x).lower() in ['true','1', 'yes']), required=False, default=False)
     args = parser.parse_args()
     learning_rate = 0.01
-    epochs= 50
+    epochs= 150
     batch_size = 256
 
     model_history = main(df_train_path=args.dftrain_path,

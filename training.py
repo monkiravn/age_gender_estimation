@@ -385,7 +385,7 @@ def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rat
     model = Resnet().to(device)
     #For binary output:gender
     criterion_binary= nn.NLLLoss()
-    #For multilabel output: race and age
+    #For multilabel output: and age
     criterion_multioutput = nn.NLLLoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate, amsgrad=True)
 

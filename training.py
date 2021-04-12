@@ -412,7 +412,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     learning_rate = 0.01
     epochs= 150
-    batch_size = 128
+    batch_size = 256
 
     model_history = main(df_train_path=args.dftrain_path,
                          df_test_path=args.dftest_path,

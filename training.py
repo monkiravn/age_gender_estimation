@@ -15,7 +15,7 @@ import argparse as argparse
 
 def train_model(model,model_save_path,train_dataloader, test_dataloader, device, criterion1, criterion2, optimizer, n_epochs=25, continous_training = False):
     """returns trained model"""
-    scheduler = StepLR(optimizer, step_size=20, gamma=0.8, verbose=True)
+    scheduler = StepLR(optimizer, step_size=50, gamma=0.8, verbose=True)
     if continous_training == True:
         print("Load check point....")
         checkpoint = torch.load(os.path.join(model_save_path, "latest_checkpoint.tar"), map_location='cpu')

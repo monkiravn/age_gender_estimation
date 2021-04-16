@@ -363,7 +363,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
     return model
 
 
-def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rate, epochs, batch_size, full_train = True, continous_training=False):
+def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rate, epochs, batch_size, train_mode = "full", continous_training=False):
 
     cnn_normalization_mean = torch.tensor([0.485, 0.456, 0.406])
     cnn_normalization_std = torch.tensor([0.229, 0.224, 0.225])
@@ -395,7 +395,7 @@ def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rat
     # criterion_age = nn.MSELoss()
     criterion = MultiTaskLossWrapper(2)
 
-    if full_train == False:
+    if train_mode == "top":
         print("Train only top layers....")
         for param in model.features.parameters():
             param.requires_grad = False
@@ -410,6 +410,22 @@ def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rat
                                     # criterion2=criterion_gender,
                                     optimizer=optimizer,
                                     n_epochs=5,
+                                    continous_training=continous_training)
+    elif train_mode =="custom":
+        print("Train from 4th-layer....")
+        for param in model.layer4.parameters():
+            param.requires_grad = False
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate, amsgrad=True)
+        model_history = train_model(model=model,
+                                    model_save_path=model_save_path,
+                                    train_dataloader=train_dataloader,
+                                    test_dataloader=test_dataloader,
+                                    device=device,
+                                    criterion = criterion,
+                                    # criterion1=criterion_age,
+                                    # criterion2=criterion_gender,
+                                    optimizer=optimizer,
+                                    n_epochs=epochs,
                                     continous_training=continous_training)
     else:
         print("Train full layers.....")
@@ -435,8 +451,7 @@ if __name__ == '__main__':
     parser.add_argument('--dftest-path', required=True)
     parser.add_argument('--dtroot-path', required=True)
     parser.add_argument('--mdsave-path', required=True)
-    parser.add_argument('--fulltrain', type=lambda x: (str(x).lower() in ['true', '1', 'yes']), required=False,
-                        default=False)
+    parser.add_argument('--train-mode', required=True)
     parser.add_argument('--continues', type=lambda x: (str(x).lower() in ['true','1', 'yes']), required=False, default=False)
     args = parser.parse_args()
     learning_rate = 0.01
@@ -450,5 +465,5 @@ if __name__ == '__main__':
                          learning_rate=learning_rate,
                          epochs=epochs,
                          batch_size= batch_size,
-                         full_train = args.fulltrain,
+                         full_train = args.train_mode,
                          continous_training=args.continues)

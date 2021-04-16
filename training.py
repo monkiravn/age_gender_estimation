@@ -390,6 +390,7 @@ def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rat
     criterion_age = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate, amsgrad=True)
     if full_train == False:
+        print("Train only top layers....")
         for param in model.features.parameters():
             param.requires_grad = False
         model_history = train_model(model=model,
@@ -403,6 +404,7 @@ def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rat
                                     n_epochs=15,
                                     continous_training=continous_training)
     else:
+        print("Train full layers.....")
         model_history =train_model(model = model,
                                    model_save_path = model_save_path,
                                    train_dataloader = train_dataloader,

@@ -3,6 +3,7 @@ import pandas as pd
 import torch
 import os
 from ultils.datasets import ImdbDataset
+from ultils.loss import MultiTaskLossWrapper
 from ultils.model import inception_V3, Densenet, Resnet
 from ultils.transfroms import Rotate_Image, RGB_ToTensor, Normalization
 from torch.utils.data import DataLoader
@@ -13,7 +14,7 @@ from torch.optim.lr_scheduler import StepLR
 import argparse as argparse
 
 
-def train_model(model,model_save_path,train_dataloader, test_dataloader, device, criterion1, criterion2, optimizer, n_epochs=25, continous_training = False):
+def train_model(model,model_save_path,train_dataloader, test_dataloader, device, criterion, optimizer, n_epochs=25, continous_training = False):
     """returns trained model"""
     scheduler = StepLR(optimizer, step_size=50, gamma=0.8, verbose=True)
     if continous_training == True:
@@ -60,10 +61,11 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                 gender_Accuracy = Accuracy()(label2_hat, label2.squeeze())
 
                 # calculate loss
-                loss1 = criterion1(label1_hat, label1)
-                loss2 = criterion2(label2_hat, label2.squeeze())
+                loss = criterion(label1_hat,label2_hat,label1,label2)
+                # loss1 = criterion1(label1_hat, label1)
+                # loss2 = criterion2(label2_hat, label2.squeeze())
 
-                loss = 6*loss1 + 0.5*loss2
+                # loss = 6*loss1 + 0.5*loss2
 
                 # back prop
                 loss.backward()
@@ -121,10 +123,11 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                     gender_Accuracy = Accuracy()(label2_hat, label2.squeeze())
 
                     # calculate loss
-                    loss1 = criterion1(label1_hat, label1)
-                    loss2 = criterion2(label2_hat, label2.squeeze())
+                    loss = criterion(label1_hat,label2_hat,label1,label2)
+                    # loss1 = criterion1(label1_hat, label1)
+                    # loss2 = criterion2(label2_hat, label2.squeeze())
 
-                    loss = 6*loss1 + 0.5*loss2
+                    # loss = 6*loss1 + 0.5*loss2
 
                     epoch_val_loss += loss.item()
                     #epoch_val_age_acc += age_Accuracy.item()
@@ -223,10 +226,11 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                 gender_Accuracy = Accuracy()(label2_hat, label2.squeeze())
 
                 # calculate loss
-                loss1 = criterion1(label1_hat, label1)
-                loss2 = criterion2(label2_hat, label2.squeeze())
+                loss = criterion(label1_hat,label2_hat,label1,label2)
+                # loss1 = criterion1(label1_hat, label1)
+                # loss2 = criterion2(label2_hat, label2.squeeze())
 
-                loss = 6*loss1 + 0.5*loss2
+                # loss = 6*loss1 + 0.5*loss2
 
                 # back prop
                 loss.backward()
@@ -285,10 +289,11 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                     gender_Accuracy = Accuracy()(label2_hat, label2.squeeze())
 
                     # calculate loss
-                    loss1 = criterion1(label1_hat, label1)
-                    loss2 = criterion2(label2_hat, label2.squeeze())
+                    loss = criterion(label1_hat,label2_hat,label1,label2)
+                    # loss1 = criterion1(label1_hat, label1)
+                    # loss2 = criterion2(label2_hat, label2.squeeze())
 
-                    loss = 6*loss1 + 0.5*loss2
+                    # loss = 6*loss1 + 0.5*loss2
 
                     epoch_val_loss += loss.item()
                     #epoch_val_age_acc += age_Accuracy.item()
@@ -329,9 +334,9 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
 
             # save the best model
             if val_loss[-1] < valid_loss_min:
-                valid_loss_min = val_loss[-1]
                 print('Validation loss decreased ({:.6f} --> {:.6f}).  Saving model ...'.format(
                     valid_loss_min, val_loss[-1]))
+                valid_loss_min = val_loss[-1]
                 torch.save({'epoch': epoch + 1,
                             'model_state_dict': model.state_dict(),
                             'optimizer_state_dict': optimizer.state_dict(),
@@ -383,11 +388,12 @@ def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rat
 
     #Setting model and moving to device
     model = Resnet().to(device)
-    #For binary output:gender
-    criterion_gender =  nn.NLLLoss()
-    #For multilabel output: and age
-    #criterion_multioutput = nn.NLLLoss()
-    criterion_age = nn.MSELoss()
+    # #For binary output:gender
+    # criterion_gender =  nn.NLLLoss()
+    # #For multilabel output: and age
+    # #criterion_multioutput = nn.NLLLoss()
+    # criterion_age = nn.MSELoss()
+    criterion = MultiTaskLossWrapper(2)
 
     if full_train == False:
         print("Train only top layers....")
@@ -399,10 +405,11 @@ def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rat
                                     train_dataloader=train_dataloader,
                                     test_dataloader=test_dataloader,
                                     device=device,
-                                    criterion1=criterion_age,
-                                    criterion2=criterion_gender,
+                                    criterion = criterion,
+                                    # criterion1=criterion_age,
+                                    # criterion2=criterion_gender,
                                     optimizer=optimizer,
-                                    n_epochs=15,
+                                    n_epochs=5,
                                     continous_training=continous_training)
     else:
         print("Train full layers.....")
@@ -412,13 +419,15 @@ def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rat
                                    train_dataloader = train_dataloader,
                                    test_dataloader = test_dataloader,
                                    device = device,
-                                   criterion1= criterion_age,
-                                   criterion2= criterion_gender,
+                                   criterion = criterion,
+                                  #  criterion1= criterion_age,
+                                  #  criterion2= criterion_gender,
                                    optimizer= optimizer,
                                    n_epochs= epochs,
                                    continous_training= continous_training)
 
     return model_history
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

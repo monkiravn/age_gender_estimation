@@ -24,11 +24,11 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
         epoch_init = checkpoint['epoch']
         train_loss = checkpoint['train_loss']
         train_age_mae = checkpoint['train_age_mae']
-        train_age_acc = checkpoint['train_age_acc']
+        #train_age_acc = checkpoint['train_age_acc']
         train_gender_acc = checkpoint['train_gender_acc']
         val_loss = checkpoint['val_loss']
         val_age_mae = checkpoint['val_age_mae']
-        val_age_acc = checkpoint['val_age_acc']
+        #val_age_acc = checkpoint['val_age_acc']
         val_gender_acc = checkpoint['val_gender_acc']
         valid_loss_min = min(val_loss)
         del checkpoint
@@ -37,11 +37,11 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
             model.train()
             running_loss = 0.0
             running_age_mae = 0.0
-            running_age_acc = 0.0
+            #running_age_acc = 0.0
             running_gender_acc = 0.0
             epoch_loss = 0.0
             epoch_age_mae = 0.0
-            epoch_age_acc = 0.0
+            #epoch_age_acc = 0.0
             epoch_gender_acc = 0.0
             for batch_idx, sample_batched in enumerate(train_dataloader):
                 # importing data and moving to GPU
@@ -56,7 +56,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
 
                 #calculate metrics
                 age_MAE = MeanAbsoluteError()(label1_hat, label1.squeeze())
-                age_Accuracy = Accuracy()(label1_hat, label1.squeeze())
+                #age_Accuracy = Accuracy()(label1_hat, label1.squeeze())
                 gender_Accuracy = Accuracy()(label2_hat, label2.squeeze())
 
                 # calculate loss
@@ -73,29 +73,29 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
 
                 running_loss += loss.item()
                 running_age_mae += age_MAE.item()
-                running_age_acc += age_Accuracy.item()
+                #running_age_acc += age_Accuracy.item()
                 running_gender_acc += gender_Accuracy.item()
                 epoch_loss += loss.item()
-                epoch_age_acc += age_Accuracy.item()
+                #epoch_age_acc += age_Accuracy.item()
                 epoch_age_mae += age_MAE.item()
                 epoch_gender_acc += gender_Accuracy.item()
 
                 if batch_idx % 50 == 0:
-                    print('Epoch %d, Batch %d loss: %.6f Age_MAE: %.4f Age_Accuracy: %.4f Gender_Accuracy: %.4f' %
-                          (epoch, batch_idx + 1, running_loss/50, running_age_mae/50, running_age_acc/50, running_gender_acc/50))
+                    print('Epoch %d, Batch %d loss: %.6f Age_MAE: %.4f Gender_Accuracy: %.4f' %
+                          (epoch, batch_idx + 1, running_loss/50, running_age_mae/50, running_gender_acc/50))
                     running_loss = 0.0
                     running_age_mae = 0.0
-                    running_age_acc = 0.0
+                    #running_age_acc = 0.0
                     running_gender_acc = 0.0
 
             train_loss.append(epoch_loss/len(train_dataloader))
-            train_age_acc.append(epoch_age_acc/len(train_dataloader))
+            #train_age_acc.append(epoch_age_acc/len(train_dataloader))
             train_age_mae.append(epoch_age_mae/len(train_dataloader))
             train_gender_acc.append(epoch_gender_acc/len(train_dataloader))
 
             epoch_loss = 0.0
             epoch_age_mae = 0.0
-            epoch_age_acc = 0.0
+            #epoch_age_acc = 0.0
             epoch_gender_acc = 0.0
 
             # validate the model #
@@ -103,7 +103,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
 
             epoch_val_loss = 0.0
             epoch_val_age_mae = 0.0
-            epoch_val_age_acc = 0.0
+            #epoch_val_age_acc = 0.0
             epoch_val_gender_acc = 0.0
 
             with torch.no_grad():
@@ -127,27 +127,27 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                     loss = 6*loss1 + 0.1*loss2
 
                     epoch_val_loss += loss.item()
-                    epoch_val_age_acc += age_Accuracy.item()
+                    #epoch_val_age_acc += age_Accuracy.item()
                     epoch_val_age_mae += age_MAE.item()
                     epoch_val_gender_acc += gender_Accuracy.item()
 
                 val_loss.append(epoch_val_loss / len(test_dataloader))
-                val_age_acc.append(epoch_val_age_acc / len(test_dataloader))
+                #val_age_acc.append(epoch_val_age_acc / len(test_dataloader))
                 val_age_mae.append(epoch_val_age_mae / len(test_dataloader))
                 val_gender_acc.append(epoch_val_gender_acc / len(test_dataloader))
 
                 epoch_val_loss = 0.0
-                epoch_val_age_acc = 0.0
+                #epoch_val_age_acc = 0.0
                 epoch_val_age_mae = 0.0
                 epoch_val_gender_acc = 0.0
 
             # print training/validation statistics
-            print('*****\nEpoch: {} \nTraining Loss: {:.6f} \tTrain Age MAE: {:.4f} \tTrain Age Accuracy: {:.4f} '
+            print('*****\nEpoch: {} \nTraining Loss: {:.6f} \tTrain Age MAE: {:.4f} '
                   '\tTrain Gender Accuracy: {:.4f}'
-                  '\nValidation Loss: {:.6f} \tValidation Age MAE: {:.4f} \tValidation Age Accuracy: {:.4f} '
+                  '\nValidation Loss: {:.6f} \tValidation Age MAE: {:.4f} '
                   '\tValidation Gender Accuracy: {:.4f}\n*****'.format(
-                epoch, train_loss[-1], train_age_mae[-1],train_age_acc[-1], train_gender_acc[-1],
-                val_loss[-1], val_age_mae[-1], val_age_acc[-1], val_gender_acc[-1]))
+                epoch, train_loss[-1], train_age_mae[-1], train_gender_acc[-1],
+                val_loss[-1], val_age_mae[-1], val_gender_acc[-1]))
 
             # save the checkpoint
             torch.save({'epoch': epoch + 1,
@@ -155,11 +155,11 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                         'optimizer_state_dict': optimizer.state_dict(),
                         'train_loss': train_loss,
                         'train_age_mae': train_age_mae,
-                        'train_age_acc': train_age_acc,
+                        #'train_age_acc': train_age_acc,
                         'train_gender_acc': train_gender_acc,
                         'val_loss': val_loss,
                         'val_age_mae': val_age_mae,
-                        'val_age_acc': val_age_acc,
+                        #'val_age_acc': val_age_acc,
                         'val_gender_acc': val_gender_acc},
                        os.path.join(model_save_path, "latest_checkpoint.tar"))
 
@@ -173,17 +173,17 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                             'optimizer_state_dict': optimizer.state_dict(),
                             'losses': train_loss,
                             'train_age_mae': train_age_mae,
-                            'train_age_acc': train_age_acc,
+                            #'train_age_acc': train_age_acc,
                             'train_gender_acc': train_gender_acc,
                             'val_losses': val_loss,
                             'val_age_mae': val_age_mae,
-                            'val_age_acc': val_age_acc,
+                            #'val_age_acc': val_age_acc,
                             'val_gender_acc': val_gender_acc},
                            os.path.join(model_save_path, "best_checkpoint.tar"))
 
             # save all losses and dsc data
-            pd_dict = {'loss': train_loss, 'train_age_mae': train_age_mae, 'train_age_acc': train_age_acc, 'train_gender_acc': train_gender_acc,
-                       'val_loss': val_loss, 'val_age_mae': val_age_mae,'val_age_acc': val_age_acc,'val_gender_acc': val_gender_acc}
+            pd_dict = {'loss': train_loss, 'train_age_mae': train_age_mae,  'train_gender_acc': train_gender_acc,
+                       'val_loss': val_loss, 'val_age_mae': val_age_mae,'val_gender_acc': val_gender_acc}
             stat = pd.DataFrame(pd_dict)
             stat.to_csv(os.path.join(model_save_path, 'losses_metrics.csv'))
 
@@ -192,18 +192,18 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
         print("Training model............")
         # initialize tracker for minimum validation loss
         valid_loss_min = np.Inf
-        train_loss, train_age_mae, train_age_acc, train_gender_acc = [], [], [], []
-        val_loss, val_age_mae, val_age_acc, val_gender_acc = [], [], [], []
+        train_loss, train_age_mae, train_gender_acc = [], [], []
+        val_loss, val_age_mae, val_gender_acc = [], [], []
         for epoch in range(1, n_epochs):
             # train the model #
             model.train()
             running_loss = 0.0
             running_age_mae = 0.0
-            running_age_acc = 0.0
+            #running_age_acc = 0.0
             running_gender_acc = 0.0
             epoch_loss = 0.0
             epoch_age_mae = 0.0
-            epoch_age_acc = 0.0
+            #epoch_age_acc = 0.0
             epoch_gender_acc = 0.0
             for batch_idx, sample_batched in enumerate(train_dataloader):
                 # importing data and moving to GPU
@@ -219,7 +219,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
 
                 # calculate metrics
                 age_MAE = MeanAbsoluteError()(label1_hat, label1.squeeze())
-                age_Accuracy = Accuracy()(label1_hat, label1.squeeze())
+                #age_Accuracy = Accuracy()(label1_hat, label1.squeeze())
                 gender_Accuracy = Accuracy()(label2_hat, label2.squeeze())
 
                 # calculate loss
@@ -236,16 +236,16 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
 
                 running_loss += loss.item()
                 running_age_mae += age_MAE.item()
-                running_age_acc += age_Accuracy.item()
+                #running_age_acc += age_Accuracy.item()
                 running_gender_acc += gender_Accuracy.item()
                 epoch_loss += loss.item()
-                epoch_age_acc += age_Accuracy.item()
+                #epoch_age_acc += age_Accuracy.item()
                 epoch_age_mae += age_MAE.item()
                 epoch_gender_acc += gender_Accuracy.item()
 
                 if batch_idx % 50 == 0:
-                    print('Epoch %d, Batch %d loss: %.6f Age_MAE: %.4f Age_Accuracy: %.4f Gender_Accuracy: %.4f' %
-                          (epoch, batch_idx + 1, running_loss / 50, running_age_mae / 50, running_age_acc / 50,
+                    print('Epoch %d, Batch %d loss: %.6f Age_MAE: %.4f Gender_Accuracy: %.4f' %
+                          (epoch, batch_idx + 1, running_loss / 50, running_age_mae / 50,
                            running_gender_acc / 50))
                     running_loss = 0.0
                     running_age_mae = 0.0
@@ -253,13 +253,13 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                     running_gender_acc = 0.0
 
             train_loss.append(epoch_loss / len(train_dataloader))
-            train_age_acc.append(epoch_age_acc / len(train_dataloader))
+            #train_age_acc.append(epoch_age_acc / len(train_dataloader))
             train_age_mae.append(epoch_age_mae / len(train_dataloader))
             train_gender_acc.append(epoch_gender_acc / len(train_dataloader))
 
             epoch_loss = 0.0
             epoch_age_mae = 0.0
-            epoch_age_acc = 0.0
+            #epoch_age_acc = 0.0
             epoch_gender_acc = 0.0
 
             # validate the model #
@@ -267,7 +267,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
 
             epoch_val_loss = 0.0
             epoch_val_age_mae = 0.0
-            epoch_val_age_acc = 0.0
+            #epoch_val_age_acc = 0.0
             epoch_val_gender_acc = 0.0
 
             with torch.no_grad():
@@ -281,7 +281,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
 
                     # calculate metrics
                     age_MAE = MeanAbsoluteError()(label1_hat, label1.squeeze())
-                    age_Accuracy = Accuracy()(label1_hat, label1.squeeze())
+                    #age_Accuracy = Accuracy()(label1_hat, label1.squeeze())
                     gender_Accuracy = Accuracy()(label2_hat, label2.squeeze())
 
                     # calculate loss
@@ -291,12 +291,12 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                     loss = 6*loss1 + 0.1*loss2
 
                     epoch_val_loss += loss.item()
-                    epoch_val_age_acc += age_Accuracy.item()
+                    #epoch_val_age_acc += age_Accuracy.item()
                     epoch_val_age_mae += age_MAE.item()
                     epoch_val_gender_acc += gender_Accuracy.item()
 
                 val_loss.append(epoch_val_loss / len(test_dataloader))
-                val_age_acc.append(epoch_val_age_acc / len(test_dataloader))
+                #val_age_acc.append(epoch_val_age_acc / len(test_dataloader))
                 val_age_mae.append(epoch_val_age_mae / len(test_dataloader))
                 val_gender_acc.append(epoch_val_gender_acc / len(test_dataloader))
 
@@ -306,12 +306,12 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                 epoch_val_gender_acc = 0.0
 
             # print training/validation statistics
-            print('*****\nEpoch: {} \nTraining Loss: {:.6f} \tTrain Age MAE: {:.4f} \tTrain Age Accuracy: {:.4f} '
+            print('*****\nEpoch: {} \nTraining Loss: {:.6f} \tTrain Age MAE: {:.4f} '
                   '\tTrain Gender Accuracy: {:.4f}'
-                  '\nValidation Loss: {:.6f} \tValidation Age MAE: {:.4f} \tValidation Age Accuracy: {:.4f} '
+                  '\nValidation Loss: {:.6f} \tValidation Age MAE: {:.4f} '
                   '\tValidation Gender Accuracy: {:.4f}\n*****'.format(
-                epoch, train_loss[-1], train_age_mae[-1], train_age_acc[-1], train_gender_acc[-1],
-                val_loss[-1], val_age_mae[-1], val_age_acc[-1], val_gender_acc[-1]))
+                epoch, train_loss[-1], train_age_mae[-1],  train_gender_acc[-1],
+                val_loss[-1], val_age_mae[-1],  val_gender_acc[-1]))
 
             # save the checkpoint
             torch.save({'epoch': epoch + 1,
@@ -319,11 +319,11 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                         'optimizer_state_dict': optimizer.state_dict(),
                         'train_loss': train_loss,
                         'train_age_mae': train_age_mae,
-                        'train_age_acc': train_age_acc,
+                        #'train_age_acc': train_age_acc,
                         'train_gender_acc': train_gender_acc,
                         'val_loss': val_loss,
                         'val_age_mae': val_age_mae,
-                        'val_age_acc': val_age_acc,
+                        #'val_age_acc': val_age_acc,
                         'val_gender_acc': val_gender_acc},
                        os.path.join(model_save_path, "latest_checkpoint.tar"))
 
@@ -337,18 +337,18 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                             'optimizer_state_dict': optimizer.state_dict(),
                             'losses': train_loss,
                             'train_age_mae': train_age_mae,
-                            'train_age_acc': train_age_acc,
+                           # 'train_age_acc': train_age_acc,
                             'train_gender_acc': train_gender_acc,
                             'val_losses': val_loss,
                             'val_age_mae': val_age_mae,
-                            'val_age_acc': val_age_acc,
+                            #'val_age_acc': val_age_acc,
                             'val_gender_acc': val_gender_acc},
                            os.path.join(model_save_path, "best_checkpoint.tar"))
 
             # save all losses and dsc data
-            pd_dict = {'loss': train_loss, 'train_age_mae': train_age_mae, 'train_age_acc': train_age_acc,
+            pd_dict = {'loss': train_loss, 'train_age_mae': train_age_mae,
                        'train_gender_acc': train_gender_acc,
-                       'val_loss': val_loss, 'val_age_mae': val_age_mae, 'val_age_acc': val_age_acc,
+                       'val_loss': val_loss, 'val_age_mae': val_age_mae,
                        'val_gender_acc': val_gender_acc}
             stat = pd.DataFrame(pd_dict)
             stat.to_csv(os.path.join(model_save_path, 'losses_metrics.csv'))
@@ -384,9 +384,10 @@ def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rat
     #Setting model and moving to device
     model = Resnet().to(device)
     #For binary output:gender
-    criterion_binary= nn.NLLLoss()
+    criterion_gender =  nn.NLLLoss()
     #For multilabel output: and age
-    criterion_multioutput = nn.NLLLoss()
+    #criterion_multioutput = nn.NLLLoss()
+    criterion_age = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate, amsgrad=True)
     if train_full == False:
         for param in model.features.parameters():
@@ -396,8 +397,8 @@ def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rat
                                     train_dataloader=train_dataloader,
                                     test_dataloader=test_dataloader,
                                     device=device,
-                                    criterion1=criterion_multioutput,
-                                    criterion2=criterion_binary,
+                                    criterion1=criterion_age,
+                                    criterion2=criterion_gender,
                                     optimizer=optimizer,
                                     n_epochs=15,
                                     continous_training=continous_training)
@@ -407,8 +408,8 @@ def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rat
                                    train_dataloader = train_dataloader,
                                    test_dataloader = test_dataloader,
                                    device = device,
-                                   criterion1= criterion_multioutput,
-                                   criterion2= criterion_binary,
+                                   criterion1= criterion_age,
+                                   criterion2= criterion_gender,
                                    optimizer= optimizer,
                                    n_epochs= epochs,
                                    continous_training= continous_training)

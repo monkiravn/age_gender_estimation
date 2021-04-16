@@ -63,7 +63,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                 loss1 = criterion1(label1_hat, label1.squeeze())
                 loss2 = criterion2(label2_hat, label2.squeeze())
 
-                loss = 6*loss1 + 0.2*loss2
+                loss = 6*loss1 + 0.1*loss2
 
                 # back prop
                 loss.backward()
@@ -124,7 +124,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                     loss1 = criterion1(label1_hat, label1.squeeze())
                     loss2 = criterion2(label2_hat, label2.squeeze())
 
-                    loss = 6*loss1 + 0.2*loss2
+                    loss = 6*loss1 + 0.1*loss2
 
                     epoch_val_loss += loss.item()
                     epoch_val_age_acc += age_Accuracy.item()
@@ -226,7 +226,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                 loss1 = criterion1(label1_hat, label1.squeeze())
                 loss2 = criterion2(label2_hat, label2.squeeze())
 
-                loss = 6*loss1 + 0.2*loss2
+                loss = 6*loss1 + 0.1*loss2
 
                 # back prop
                 loss.backward()
@@ -288,7 +288,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                     loss1 = criterion1(label1_hat, label1.squeeze())
                     loss2 = criterion2(label2_hat, label2.squeeze())
 
-                    loss = 6*loss1 + 0.2*loss2
+                    loss = 6*loss1 + 0.1*loss2
 
                     epoch_val_loss += loss.item()
                     epoch_val_age_acc += age_Accuracy.item()
@@ -412,7 +412,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     learning_rate = 0.01
     epochs= 150
-    batch_size = 128
+    batch_size = 256
 
     model_history = main(df_train_path=args.dftrain_path,
                          df_test_path=args.dftest_path,

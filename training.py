@@ -467,5 +467,5 @@ if __name__ == '__main__':
                          learning_rate=learning_rate,
                          epochs=epochs,
                          batch_size= batch_size,
-                         full_train = args.train_mode,
+                         train_mode = args.train_mode,
                          continous_training=args.continues)

@@ -208,7 +208,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
             for batch_idx, sample_batched in enumerate(train_dataloader):
                 # importing data and moving to GPU
                 image, label1, label2 = sample_batched['image'].to(device, dtype=torch.float), sample_batched[
-                    'label_age'].to(device, dtype=torch.long), \
+                    'label_age'].to(device, dtype=torch.float), \
                                         sample_batched['label_gender'].to(device, dtype=torch.long)
 
                 # zero the parameter gradients

@@ -63,7 +63,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                 loss1 = criterion1(label1_hat, label1)
                 loss2 = criterion2(label2_hat, label2.squeeze())
 
-                loss = 6*loss1 + 0.1*loss2
+                loss = 6*loss1 + 0.5*loss2
 
                 # back prop
                 loss.backward()
@@ -124,7 +124,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                     loss1 = criterion1(label1_hat, label1)
                     loss2 = criterion2(label2_hat, label2.squeeze())
 
-                    loss = 6*loss1 + 0.1*loss2
+                    loss = 6*loss1 + 0.5*loss2
 
                     epoch_val_loss += loss.item()
                     #epoch_val_age_acc += age_Accuracy.item()
@@ -226,7 +226,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                 loss1 = criterion1(label1_hat, label1)
                 loss2 = criterion2(label2_hat, label2.squeeze())
 
-                loss = 6*loss1 + 0.1*loss2
+                loss = 6*loss1 + 0.5*loss2
 
                 # back prop
                 loss.backward()
@@ -288,7 +288,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                     loss1 = criterion1(label1_hat, label1)
                     loss2 = criterion2(label2_hat, label2.squeeze())
 
-                    loss = 6*loss1 + 0.1*loss2
+                    loss = 6*loss1 + 0.5*loss2
 
                     epoch_val_loss += loss.item()
                     #epoch_val_age_acc += age_Accuracy.item()
@@ -388,11 +388,12 @@ def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rat
     #For multilabel output: and age
     #criterion_multioutput = nn.NLLLoss()
     criterion_age = nn.MSELoss()
-    optimizer = optim.Adam(model.parameters(), lr=learning_rate, amsgrad=True)
+
     if full_train == False:
         print("Train only top layers....")
         for param in model.features.parameters():
             param.requires_grad = False
+        optimizer = optim.Adam(model.parameters(), lr=0.05, amsgrad=True)
         model_history = train_model(model=model,
                                     model_save_path=model_save_path,
                                     train_dataloader=train_dataloader,
@@ -405,6 +406,7 @@ def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rat
                                     continous_training=continous_training)
     else:
         print("Train full layers.....")
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate, amsgrad=True)
         model_history =train_model(model = model,
                                    model_save_path = model_save_path,
                                    train_dataloader = train_dataloader,

@@ -415,7 +415,7 @@ def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rat
                                     continous_training=continous_training)
     elif train_mode =="custom":
         print("Train from 4th-layer....")
-        for param in model.layer4.parameters():
+        for param in model.features[:7].parameters():
             param.requires_grad = False
         optimizer = optim.Adam(model.parameters(), lr=learning_rate, amsgrad=True)
         model_history = train_model(model=model,

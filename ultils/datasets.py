@@ -31,9 +31,9 @@ class ImdbDataset(Dataset):
     def __getitem__(self, idx):
         if torch.is_tensor(idx):
           idx = idx.tolist()
-        image_path = os.path.join(self.data_root,self.x.iloc[idx])
-        image = Image.open(image_path)
-        image = np.array(image).astype('float')
+        image_path = os.path.join(self.data_root, self.x.iloc[idx])
+        image = Image.open(image_path).convert('RGB')
+        image = np.array(image).astype('float') / 255.0
         label1 = np.array([self.age_y.iloc[idx]]).astype('float')
         label2 = np.array([self.gender_y.iloc[idx]]).astype('float')
 

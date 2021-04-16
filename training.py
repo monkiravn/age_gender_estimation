@@ -422,7 +422,7 @@ if __name__ == '__main__':
     parser.add_argument('--dftest-path', required=True)
     parser.add_argument('--dtroot-path', required=True)
     parser.add_argument('--mdsave-path', required=True)
-    parser.add_argument('--is-train-full', type=lambda x: (str(x).lower() in ['true', '1', 'yes']), required=False,
+    parser.add_argument('--fulltrain', type=lambda x: (str(x).lower() in ['true', '1', 'yes']), required=False,
                         default=False)
     parser.add_argument('--continues', type=lambda x: (str(x).lower() in ['true','1', 'yes']), required=False, default=False)
     args = parser.parse_args()
@@ -437,5 +437,5 @@ if __name__ == '__main__':
                          learning_rate=learning_rate,
                          epochs=epochs,
                          batch_size= batch_size,
-                         is_train_full = args.is_train_full,
+                         is_train_full = args.fulltrain,
                          continous_training=args.continues)

@@ -45,7 +45,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
             epoch_gender_acc = 0.0
             for batch_idx, sample_batched in enumerate(train_dataloader):
                 # importing data and moving to GPU
-                image, label1, label2= sample_batched['image'].to(device,dtype=torch.float), sample_batched['label_age'].to(device,dtype=torch.long),  \
+                image, label1, label2= sample_batched['image'].to(device,dtype=torch.float), sample_batched['label_age'].to(device,dtype=torch.float),  \
                                        sample_batched['label_gender'].to(device,dtype=torch.long)
 
                 # zero the parameter gradients
@@ -55,7 +55,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                 label2_hat = output['label2'].cuda()
 
                 #calculate metrics
-                age_MAE = MeanAbsoluteError()(label1_hat, label1.squeeze())
+                age_MAE = MeanAbsoluteError()(label1_hat, label1)
                 #age_Accuracy = Accuracy()(label1_hat, label1.squeeze())
                 gender_Accuracy = Accuracy()(label2_hat, label2.squeeze())
 
@@ -109,14 +109,14 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
             with torch.no_grad():
                 for batch_idx, sample_batched in enumerate(test_dataloader):
                     image, label1, label2 = sample_batched['image'].to(device,dtype=torch.float), \
-                                                    sample_batched['label_age'].to(device,dtype=torch.long), \
+                                                    sample_batched['label_age'].to(device,dtype=torch.float), \
                                                     sample_batched['label_gender'].to(device,dtype=torch.long)
                     output = model(image)
                     label1_hat = output['label1'].cuda()
                     label2_hat = output['label2'].cuda()
 
                     # calculate metrics
-                    age_MAE = MeanAbsoluteError()(label1_hat, label1.squeeze())
+                    age_MAE = MeanAbsoluteError()(label1_hat, label1)
                     age_Accuracy = Accuracy()(label1_hat, label1.squeeze())
                     gender_Accuracy = Accuracy()(label2_hat, label2.squeeze())
 
@@ -218,7 +218,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                 label2_hat = output['label2'].cuda()
 
                 # calculate metrics
-                age_MAE = MeanAbsoluteError()(label1_hat, label1.squeeze())
+                age_MAE = MeanAbsoluteError()(label1_hat, label1)
                 #age_Accuracy = Accuracy()(label1_hat, label1.squeeze())
                 gender_Accuracy = Accuracy()(label2_hat, label2.squeeze())
 
@@ -273,14 +273,14 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
             with torch.no_grad():
                 for batch_idx, sample_batched in enumerate(test_dataloader):
                     image, label1, label2 = sample_batched['image'].to(device, dtype=torch.float), \
-                                            sample_batched['label_age'].to(device, dtype=torch.long), \
+                                            sample_batched['label_age'].to(device, dtype=torch.float), \
                                             sample_batched['label_gender'].to(device, dtype=torch.long)
                     output = model(image)
                     label1_hat = output['label1'].cuda()
                     label2_hat = output['label2'].cuda()
 
                     # calculate metrics
-                    age_MAE = MeanAbsoluteError()(label1_hat, label1.squeeze())
+                    age_MAE = MeanAbsoluteError()(label1_hat, label1)
                     #age_Accuracy = Accuracy()(label1_hat, label1.squeeze())
                     gender_Accuracy = Accuracy()(label2_hat, label2.squeeze())
 

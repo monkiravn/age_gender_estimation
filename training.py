@@ -60,7 +60,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                 gender_Accuracy = Accuracy()(label2_hat, label2.squeeze())
 
                 # calculate loss
-                loss1 = criterion1(label1_hat, label1.squeeze())
+                loss1 = criterion1(label1_hat, label1)
                 loss2 = criterion2(label2_hat, label2.squeeze())
 
                 loss = 6*loss1 + 0.1*loss2
@@ -121,7 +121,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                     gender_Accuracy = Accuracy()(label2_hat, label2.squeeze())
 
                     # calculate loss
-                    loss1 = criterion1(label1_hat, label1.squeeze())
+                    loss1 = criterion1(label1_hat, label1)
                     loss2 = criterion2(label2_hat, label2.squeeze())
 
                     loss = 6*loss1 + 0.1*loss2
@@ -223,7 +223,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                 gender_Accuracy = Accuracy()(label2_hat, label2.squeeze())
 
                 # calculate loss
-                loss1 = criterion1(label1_hat, label1.squeeze())
+                loss1 = criterion1(label1_hat, label1)
                 loss2 = criterion2(label2_hat, label2.squeeze())
 
                 loss = 6*loss1 + 0.1*loss2
@@ -285,7 +285,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                     gender_Accuracy = Accuracy()(label2_hat, label2.squeeze())
 
                     # calculate loss
-                    loss1 = criterion1(label1_hat, label1.squeeze())
+                    loss1 = criterion1(label1_hat, label1)
                     loss2 = criterion2(label2_hat, label2.squeeze())
 
                     loss = 6*loss1 + 0.1*loss2

@@ -34,7 +34,7 @@ class ImdbDataset(Dataset):
         image_path = os.path.join(self.data_root, self.x.iloc[idx])
         image = Image.open(image_path).convert('RGB')
         image = np.array(image).astype('float') / 255.0
-        label1 = np.array([self.age_y.iloc[idx]]).astype('float')
+        label1 = np.array([self.age_y.iloc[idx]]).astype('float') / 100.0
         label2 = np.array([self.gender_y.iloc[idx]]).astype('float')
 
         sample = {'image': np.uint8(image), 'label_age': label1,

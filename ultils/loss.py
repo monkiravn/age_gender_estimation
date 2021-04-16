@@ -7,16 +7,16 @@ class MultiTaskLossWrapper(nn.Module):
         self.task_num = task_num
         self.log_vars = nn.Parameter(torch.zeros((task_num)))
 
-    def forward(self, preds, age, gender):
+    def forward(self, age_hat, gender_hat , age, gender):
         mse, crossEntropy = nn.MSELoss(), nn.NLLLoss()
 
-        sages = age
+        sages = age*100
         idx1 = (sages < 20) | ((sages > 40) & (sages <= 60))
         idx2 = sages > 60
 
-        loss0 = mse(preds[0], age) + 2 * mse(preds[0][idx1], age[idx1]) + 3 * mse(preds[0][idx2], age[
+        loss0 = mse(age_hat, age) + 2 * mse(age_hat[idx1], age[idx1]) + 3 * mse(age_hat[idx2], age[
             idx2])  # trying to account for the imbalance
-        loss1 = crossEntropy(preds[1], gender)
+        loss1 = crossEntropy(gender_hat, gender.squeeze())
 
 
         precision0 = torch.exp(-self.log_vars[0])

@@ -457,7 +457,7 @@ if __name__ == '__main__':
     parser.add_argument('--train-mode', required=True)
     parser.add_argument('--continues', type=lambda x: (str(x).lower() in ['true','1', 'yes']), required=False, default=False)
     args = parser.parse_args()
-    learning_rate = 0.01
+    learning_rate = 0.001
     epochs= 150
     batch_size = 256
 

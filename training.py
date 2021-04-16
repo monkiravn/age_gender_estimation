@@ -358,7 +358,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
     return model
 
 
-def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rate, epochs, batch_size, train_full = True, continous_training=False):
+def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rate, epochs, batch_size, full_train = True, continous_training=False):
 
     cnn_normalization_mean = torch.tensor([0.485, 0.456, 0.406])
     cnn_normalization_std = torch.tensor([0.229, 0.224, 0.225])
@@ -389,7 +389,7 @@ def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rat
     #criterion_multioutput = nn.NLLLoss()
     criterion_age = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate, amsgrad=True)
-    if train_full == False:
+    if full_train == False:
         for param in model.features.parameters():
             param.requires_grad = False
         model_history = train_model(model=model,
@@ -437,5 +437,5 @@ if __name__ == '__main__':
                          learning_rate=learning_rate,
                          epochs=epochs,
                          batch_size= batch_size,
-                         is_train_full = args.fulltrain,
+                         full_train = args.fulltrain,
                          continous_training=args.continues)

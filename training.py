@@ -369,13 +369,15 @@ def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rat
     cnn_normalization_std = torch.tensor([0.229, 0.224, 0.225])
 
     train_transforms = transforms.Compose([
-                                    Rotate_Image(),
+                                    #Rotate_Image(),
                                     RGB_ToTensor(),
-                                    Normalization(cnn_normalization_mean, cnn_normalization_std)])
+                                    #Normalization(cnn_normalization_mean, cnn_normalization_std)
+         ])
 
     test_transforms = transforms.Compose([
                                     RGB_ToTensor(),
-                                    Normalization(cnn_normalization_mean, cnn_normalization_std)])
+                                    #Normalization(cnn_normalization_mean, cnn_normalization_std)
+        ])
 
     train_dataset = ImdbDataset(dataframe_path=df_train_path, data_root_path=data_root_path, transform=train_transforms)
     test_dataset = ImdbDataset(dataframe_path=df_test_path, data_root_path=data_root_path, transform=test_transforms)

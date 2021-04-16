@@ -16,7 +16,7 @@ import argparse as argparse
 
 def train_model(model,model_save_path,train_dataloader, test_dataloader, device, criterion, optimizer, n_epochs=25, continous_training = False):
     """returns trained model"""
-    scheduler = StepLR(optimizer, step_size=5, gamma=0.8, verbose=True)
+    scheduler = StepLR(optimizer, step_size=50, gamma=0.8, verbose=True)
     if continous_training == True:
         print("Load check point....")
         checkpoint = torch.load(os.path.join(model_save_path, "latest_checkpoint.tar"), map_location='cpu')
@@ -417,6 +417,7 @@ def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rat
         print("Train from 4th-layer....")
         for param in model.features[:7].parameters():
             param.requires_grad = False
+
         optimizer = optim.Adam(model.parameters(), lr=learning_rate, amsgrad=True)
         model_history = train_model(model=model,
                                     model_save_path=model_save_path,

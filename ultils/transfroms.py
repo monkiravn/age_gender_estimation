@@ -2,8 +2,7 @@ import torch
 from skimage.transform import AffineTransform, warp
 import numpy as np
 from PIL import Image
-import torch.nn.functional as F
-
+import torchvision
 
 class Rotate_Image(object):
     def __call__(self, sample):
@@ -63,7 +62,8 @@ class Resize(object):
         self.size = size
     def __call__(self, sample):
         image, label1, label2 = sample['image'], sample['label_age'], sample['label_gender']
-        image = F.interpolate(image, size = self.size)
+        #image = F.interpolate(image, size = self.size)
+        image = torchvision.transforms.Resize(size= self.size)(image)
         return {'image': image,
                 'label_age': label1,
                 'label_gender': label2}
@@ -71,7 +71,7 @@ class Resize(object):
 
 
 if __name__ == '__main__':
-    x = np.ones((2,3,224,224))
+    x = np.ones((3,224,224))
     y1 = np.ones((2,1))
     y2 = np.ones((2,1))
     sample = {'image': torch.from_numpy(x),

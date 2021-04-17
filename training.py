@@ -372,13 +372,13 @@ def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rat
                                     #Rotate_Image(),
                                     RGB_ToTensor(),
                                     #Normalization(cnn_normalization_mean, cnn_normalization_std),
-                                    #Resize(size=(64,64))
+                                    Resize(size=(64,64))
          ])
 
     test_transforms = transforms.Compose([
                                     RGB_ToTensor(),
                                     #Normalization(cnn_normalization_mean, cnn_normalization_std),
-                                    #Resize(size=(64, 64))
+                                    Resize(size=(64, 64))
         ])
 
     train_dataset = ImdbDataset(dataframe_path=df_train_path, data_root_path=data_root_path, transform=train_transforms)

@@ -5,7 +5,7 @@ import os
 from ultils.datasets import ImdbDataset
 from ultils.loss import MultiTaskLossWrapper
 from ultils.model import inception_V3, Densenet, Resnet
-from ultils.transfroms import Rotate_Image, RGB_ToTensor, Normalization
+from ultils.transfroms import Rotate_Image, RGB_ToTensor, Normalization, Resize
 from torch.utils.data import DataLoader
 from ultils.metrics import Accuracy, MeanAbsoluteError
 from torchvision import transforms
@@ -369,14 +369,16 @@ def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rat
     cnn_normalization_std = torch.tensor([0.229, 0.224, 0.225])
 
     train_transforms = transforms.Compose([
-                                    #Rotate_Image(),
+                                    Rotate_Image(),
                                     RGB_ToTensor(),
-                                    #Normalization(cnn_normalization_mean, cnn_normalization_std)
+                                    Normalization(cnn_normalization_mean, cnn_normalization_std),
+                                    Resize(size=(64,64))
          ])
 
     test_transforms = transforms.Compose([
                                     RGB_ToTensor(),
-                                    #Normalization(cnn_normalization_mean, cnn_normalization_std)
+                                    Normalization(cnn_normalization_mean, cnn_normalization_std),
+                                    Resize(size=(64, 64))
         ])
 
     train_dataset = ImdbDataset(dataframe_path=df_train_path, data_root_path=data_root_path, transform=train_transforms)

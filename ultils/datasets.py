@@ -36,7 +36,7 @@ class ImdbDataset(Dataset):
         image_path = os.path.join(self.data_root, self.x.iloc[idx])
         image = Image.open(image_path).convert('RGB')
         image = np.array(image).astype('float') / 255.0
-        label1 = np.array([self.age_y.iloc[idx]]).astype('float') / 100.0
+        label1 = np.array([self.age_y.iloc[idx]]).astype('float')
         label2 = np.array([self.gender_y.iloc[idx]]).astype('float')
 
         sample = {'image': image, 'label_age': label1,
@@ -54,7 +54,8 @@ class ImdbDataset(Dataset):
         age, gender = sample['label_age'], sample['label_gender']
         stds = np.array([0.229, 0.224, 0.225])
         means = np.array([0.485, 0.456, 0.406])
-        # img = ((x.numpy().transpose((1,2,0))*stds + means)*255).astype(np.uint8)
+        #img = ((x.numpy().transpose((1,2,0))*stds + means)*255).astype(np.uint8)
         img = ((x.numpy().transpose((1, 2, 0))) * 255).astype(np.uint8)
+        print(img.shape)
         plt.imshow(img)
         plt.title("{} {}".format(int(age.mul_(100).item()), gender.item()))

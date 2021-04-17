@@ -3,8 +3,8 @@ import pandas as pd
 import torch
 import os
 from ultils.datasets import ImdbDataset
-from ultils.loss import MultiTaskLossWrapper
-from ultils.model import inception_V3, Densenet, Resnet
+from ultils.loss import MultiTaskLossWrapper,Classify_Loss
+from ultils.model import inception_V3, Densenet, ResnetV1,ResnetV2
 from ultils.transfroms import Rotate_Image, RGB_ToTensor, Normalization, Resize
 from torch.utils.data import DataLoader
 from ultils.metrics import Accuracy, MeanAbsoluteError
@@ -46,7 +46,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
             epoch_gender_acc = 0.0
             for batch_idx, sample_batched in enumerate(train_dataloader):
                 # importing data and moving to GPU
-                image, label1, label2= sample_batched['image'].to(device,dtype=torch.float), sample_batched['label_age'].to(device,dtype=torch.float),  \
+                image, label1, label2= sample_batched['image'].to(device,dtype=torch.float), sample_batched['label_age'].to(device,dtype=torch.long),  \
                                        sample_batched['label_gender'].to(device,dtype=torch.long)
 
                 # zero the parameter gradients
@@ -61,7 +61,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                 gender_Accuracy = Accuracy()(label2_hat, label2.squeeze())
 
                 # calculate loss
-                loss = criterion(label1_hat,label2_hat,label1,label2)
+                loss = criterion(label1_hat,label2_hat,label1.squeeze(),label2.squeeze())
                 # loss1 = criterion1(label1_hat, label1)
                 # loss2 = criterion2(label2_hat, label2.squeeze())
 
@@ -111,7 +111,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
             with torch.no_grad():
                 for batch_idx, sample_batched in enumerate(test_dataloader):
                     image, label1, label2 = sample_batched['image'].to(device,dtype=torch.float), \
-                                                    sample_batched['label_age'].to(device,dtype=torch.float), \
+                                                    sample_batched['label_age'].to(device,dtype=torch.long), \
                                                     sample_batched['label_gender'].to(device,dtype=torch.long)
                     output = model(image)
                     label1_hat = output['label1'].cuda()
@@ -123,7 +123,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                     gender_Accuracy = Accuracy()(label2_hat, label2.squeeze())
 
                     # calculate loss
-                    loss = criterion(label1_hat,label2_hat,label1,label2)
+                    loss = criterion(label1_hat,label2_hat,label1.squeeze(),label2.squeeze())
                     # loss1 = criterion1(label1_hat, label1)
                     # loss2 = criterion2(label2_hat, label2.squeeze())
 
@@ -211,7 +211,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
             for batch_idx, sample_batched in enumerate(train_dataloader):
                 # importing data and moving to GPU
                 image, label1, label2 = sample_batched['image'].to(device, dtype=torch.float), sample_batched[
-                    'label_age'].to(device, dtype=torch.float), \
+                    'label_age'].to(device, dtype=torch.long), \
                                         sample_batched['label_gender'].to(device, dtype=torch.long)
 
                 # zero the parameter gradients
@@ -226,7 +226,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                 gender_Accuracy = Accuracy()(label2_hat, label2.squeeze())
 
                 # calculate loss
-                loss = criterion(label1_hat,label2_hat,label1,label2)
+                loss = criterion(label1_hat,label2_hat,label1.squeeze(),label2.squeeze())
                 # loss1 = criterion1(label1_hat, label1)
                 # loss2 = criterion2(label2_hat, label2.squeeze())
 
@@ -277,7 +277,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
             with torch.no_grad():
                 for batch_idx, sample_batched in enumerate(test_dataloader):
                     image, label1, label2 = sample_batched['image'].to(device, dtype=torch.float), \
-                                            sample_batched['label_age'].to(device, dtype=torch.float), \
+                                            sample_batched['label_age'].to(device, dtype=torch.long), \
                                             sample_batched['label_gender'].to(device, dtype=torch.long)
                     output = model(image)
                     label1_hat = output['label1'].cuda()
@@ -289,7 +289,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                     gender_Accuracy = Accuracy()(label2_hat, label2.squeeze())
 
                     # calculate loss
-                    loss = criterion(label1_hat,label2_hat,label1,label2)
+                    loss = criterion(label1_hat,label2_hat,label1.squeeze(),label2.squeeze())
                     # loss1 = criterion1(label1_hat, label1)
                     # loss2 = criterion2(label2_hat, label2.squeeze())
 
@@ -391,13 +391,14 @@ def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rat
 
 
     #Setting model and moving to device
-    model = Resnet().to(device)
+    model = ResnetV2().to(device)
     # #For binary output:gender
     # criterion_gender =  nn.NLLLoss()
     # #For multilabel output: and age
     # #criterion_multioutput = nn.NLLLoss()
     # criterion_age = nn.MSELoss()
     criterion = MultiTaskLossWrapper(2)
+    criterion = Classify_Loss(weight=[6,0.2])
 
     if train_mode == "top":
         print("Train only top layers....")

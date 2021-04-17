@@ -32,9 +32,9 @@ class Densenet(nn.Module):
 
 
 
-class Resnet(nn.Module):
+class ResnetV1(nn.Module):
     def __init__(self):
-        super(Resnet, self).__init__()
+        super(ResnetV1, self).__init__()
         original_model = models.resnet34(pretrained="True")
         self.features = nn.Sequential(*list(original_model.children())[:-2])
         self.apply_log_soft = nn.LogSoftmax(dim=1)
@@ -49,9 +49,26 @@ class Resnet(nn.Module):
         label2 = self.apply_log_soft(self.fc2(x))
         return {'label1': label1, 'label2': label2}
 
+class ResnetV2(nn.Module):
+    def __init__(self):
+        super(ResnetV2, self).__init__()
+        original_model = models.resnet34(pretrained="True")
+        self.features = nn.Sequential(*list(original_model.children())[:-2])
+        self.apply_log_soft = nn.LogSoftmax(dim=1)
+        self.fc1 = nn.Linear(512, 100)  # For age class
+        self.fc2 = nn.Linear(512, 2)  # For gender class
+
+    def forward(self, x):
+        bs, _, _, _ = x.shape
+        x = self.features(x)
+        x = F.adaptive_avg_pool2d(x, 1).reshape(bs, -1)
+        label1 = self.apply_log_soft(self.fc1(x))
+        label2 = self.apply_log_soft(self.fc2(x))
+        return {'label1': label1, 'label2': label2}
+
 if __name__ == '__main__':
     from torchsummary import summary
-    model = Resnet()
+    model = ResnetV1()
     if torch.cuda.is_available():
         model.cuda()
     summary(model, input_size=(3, 224, 224))

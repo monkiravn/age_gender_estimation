@@ -10,7 +10,7 @@ class MeanAbsoluteError:
         x : torch.Tensor
         y : torch.Tensor
         """
-        #tensor1 = torch.argmax(tensor1, 1).type(torch.float)
+        tensor1 = torch.argmax(tensor1, 1).type(torch.float)
         return torch.mean(torch.abs(tensor1 - tensor2))
 
 class Accuracy:

@@ -401,7 +401,7 @@ def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rat
         print("Train only top layers....")
         for param in model.features.parameters():
             param.requires_grad = False
-        optimizer = optim.Adam(model.parameters(), lr=0.02, amsgrad=True)
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate*2, amsgrad=True)
         model_history = train_model(model=model,
                                     model_save_path=model_save_path,
                                     train_dataloader=train_dataloader,

@@ -2,6 +2,8 @@ import torch
 from skimage.transform import AffineTransform, warp
 import numpy as np
 from PIL import Image
+import torch.nn.functional as F
+
 
 class Rotate_Image(object):
     def __call__(self, sample):
@@ -50,18 +52,31 @@ class Normalization(object):
 
     def __call__(self, sample):
         image, label1, label2 = sample['image'], sample['label_age'], sample['label_gender']
-
+        image = (image*self.std) + self.mean
         return {'image': image,
                 'label_age': label1,
                 'label_gender': label2}
 
+
+class Resize(object):
+    def __init__(self, size = (224,224)):
+        self.size = size
+    def __call__(self, sample):
+        image, label1, label2 = sample['image'], sample['label_age'], sample['label_gender']
+        image = F.interpolate(image, size = self.size)
+        return {'image': image,
+                'label_age': label1,
+                'label_gender': label2}
+
+
+
 if __name__ == '__main__':
-    x = np.ones((2,224,224,3))
+    x = np.ones((2,3,224,224))
     y1 = np.ones((2,1))
     y2 = np.ones((2,1))
-    sample = {'image': x,
+    sample = {'image': torch.from_numpy(x),
               'label_age': y1,
               'label_gender': y2}
-    sample_tensor = RGB_ToTensor()(sample)
+    sample_tensor = Resize(size=(64,64))(sample)
     print(sample_tensor['image'].size())
-    print(sample_tensor['label_age'].size())
+    #print(sample_tensor['label_age'].size())

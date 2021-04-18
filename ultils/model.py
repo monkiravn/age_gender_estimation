@@ -77,6 +77,7 @@ class ResnetV3(nn.Module):
         self.features1 = nn.Sequential(*list(original_model1.children())[6:-2])
         self.features2 = nn.Sequential(*list(original_model2.children())[6:-2])
         self.apply_log_soft = nn.LogSoftmax(dim=1)
+        self.sigmoid = nn.Sigmoid()
         self.fc1 = nn.Linear(512, 1)  # For age class
         self.fc2 = nn.Linear(512, 2)  # For gender class
 
@@ -88,7 +89,7 @@ class ResnetV3(nn.Module):
         x1 = F.adaptive_avg_pool2d(x1, 1).reshape(bs, -1)
         x2 = F.adaptive_avg_pool2d(x2, 1).reshape(bs, -1)
 
-        label1 = self.fc1(x1)
+        label1 = self.sigmoid(self.fc1(x1))
         label2 = self.apply_log_soft(self.fc2(x2))
         return {'label1': label1, 'label2': label2}
 

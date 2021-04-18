@@ -138,7 +138,7 @@ def main(model_save_path, df_test_path, dt_root_path, batch_size=256):
 
     checkpoint = torch.load(os.path.join(model_save_path, "best_checkpoint.tar"), map_location='cpu')
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    model = ResnetV2().to(device)
+    model = ResnetV3().to(device)
     # # For binary output:gender
     # criterion_binary = nn.NLLLoss()
     # # For multilabel output: and age

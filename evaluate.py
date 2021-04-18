@@ -13,6 +13,7 @@ from torch import nn
 import argparse as argparse
 import random
 import numpy as np
+from utils.loss import MultiTaskLossWrapper,Classify_Loss
 
 def plot_losses_metrics(df_losses_metrics_path, model_save_path):
     df = pd.read_csv(df_losses_metrics_path)
@@ -51,7 +52,7 @@ def plot_losses_metrics(df_losses_metrics_path, model_save_path):
     plt.show()
 
 
-def evaluate_test_set(model,criterion1,criterion2,test_dataloader,device):
+def evaluate_test_set(model,criterion,test_dataloader,device):
 
     # validate the model #
     model.eval()
@@ -64,25 +65,26 @@ def evaluate_test_set(model,criterion1,criterion2,test_dataloader,device):
     with torch.no_grad():
         for batch_idx, sample_batched in enumerate(test_dataloader):
             image, label1, label2 = sample_batched['image'].to(device, dtype=torch.float), \
-                                    sample_batched['label_age'].to(device, dtype=torch.long), \
+                                    sample_batched['label_age'].to(device, dtype=torch.float), \
                                     sample_batched['label_gender'].to(device, dtype=torch.long)
             output = model(image)
             label1_hat = output['label1'].cuda()
             label2_hat = output['label2'].cuda()
 
             # calculate metrics
-            age_MAE = MeanAbsoluteError()(label1_hat, label1.squeeze())
-            age_Accuracy = Accuracy()(label1_hat, label1.squeeze())
+            age_MAE = MeanAbsoluteError()(label1_hat, label1)
+            # age_Accuracy = Accuracy()(label1_hat, label1.squeeze())
             gender_Accuracy = Accuracy()(label2_hat, label2.squeeze())
 
             # calculate loss
-            loss1 = criterion1(label1_hat, label1.squeeze())
-            loss2 = criterion2(label2_hat, label2.squeeze())
+            loss = criterion(label1_hat, label2_hat, label1, label2)
+            # loss1 = criterion1(label1_hat, label1)
+            # loss2 = criterion2(label2_hat, label2.squeeze())
 
-            loss = 3 * loss1 + loss2
+            # loss = 6*loss1 + 0.5*loss2
 
             test_loss += loss.item()
-            test_age_acc += age_Accuracy.item()
+            # epoch_val_age_acc += age_Accuracy.item()
             test_age_mae += age_MAE.item()
             test_gender_acc += gender_Accuracy.item()
 
@@ -137,15 +139,15 @@ def main(model_save_path, df_test_path, dt_root_path, batch_size=256):
     checkpoint = torch.load(os.path.join(model_save_path, "best_checkpoint.tar"), map_location='cpu')
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = ResnetV2().to(device)
-    # For binary output:gender
-    criterion_binary = nn.NLLLoss()
-    # For multilabel output: and age
-    criterion_multioutput = nn.NLLLoss()
+    # # For binary output:gender
+    # criterion_binary = nn.NLLLoss()
+    # # For multilabel output: and age
+    # criterion_multioutput = nn.NLLLoss()
+    criterion = MultiTaskLossWrapper(2)
     model.load_state_dict(checkpoint['model_state_dict'])
     print("Evaluating........")
     evaluate_test_set(model = model,
-                      criterion1=criterion_multioutput,
-                      criterion2=criterion_binary,
+                      criterion=criterion,
                       test_dataloader = test_dataloader,
                       device=device)
     print("Plotting........")

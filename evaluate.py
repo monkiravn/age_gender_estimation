@@ -105,7 +105,7 @@ def predict(model,model_save_path,test_dataset,device, num_predicts = 20):
         age_hat = output['label1']
         gender_hat = output['label2']
         ax = plt.figure(figsize=(10,10))
-        plt.imshow(image.numpy().transpose((1, 2, 0))*255)
+        plt.imshow(image.numpy().transpose((1, 2, 0)))
         gender = "M" if gender.item() == 1.0 else "FM"
         gender_hat = torch.argmax(gender_hat).item()
         gender_hat = "M" if gender_hat == 1 else "FM"

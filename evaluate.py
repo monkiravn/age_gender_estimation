@@ -108,18 +108,18 @@ def predict(model,model_save_path,test_dataset,device, num_predicts = 20):
         plt.imshow((image.numpy().transpose((1, 2, 0))*255).astype(np.uint8))
         gender = "M" if gender.item() == 1.0 else "FM"
         gender_hat = torch.argmax(gender_hat).item()
-        #gender_hat = "M" if gender_hat == 1 else "FM"
+        gender_hat = "M" if gender_hat == 1 else "FM"
         #age = int(age.mul_(100).item())
         age = int(age.item())
         age_hat = torch.argmax(age_hat).item()
-        pre_str = str(age_hat) + "," + str(gender_hat)
+        pre_str = str(age_hat) + "," + gender_hat
         actual_str = str(age) + "," + gender
         textstr = 'Predict: ' + pre_str + '\nActual: ' + actual_str
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
         ax.text(0.05, 0.95, textstr, fontsize=14,
                 verticalalignment='top', bbox=props)
         plt.axis('off')
-        figname = str(age_hat) + "_" + str(gender_hat) + "_" + str(age) + "_" + gender + ".jpg"
+        figname = str(age_hat) + "_" + gender_hat + "_" + str(age) + "_" + gender + ".jpg"
         plt.savefig(os.path.join(model_save_path,figname))
 
 
@@ -143,16 +143,16 @@ def main(model_save_path, df_test_path, dt_root_path, batch_size=256):
     criterion_multioutput = nn.NLLLoss()
     model.load_state_dict(checkpoint['model_state_dict'])
     print("Evaluating........")
-    # evaluate_test_set(model = model,
-    #                   criterion1=criterion_multioutput,
-    #                   criterion2=criterion_binary,
-    #                   test_dataloader = test_dataloader,
-    #                   device=device)
+    evaluate_test_set(model = model,
+                      criterion1=criterion_multioutput,
+                      criterion2=criterion_binary,
+                      test_dataloader = test_dataloader,
+                      device=device)
     print("Plotting........")
-    # df_losses_metrics_path = os.path.join(model_save_path,"losses_metrics.csv")
-    # plot_losses_metrics(df_losses_metrics_path= df_losses_metrics_path,
-    #                     model_save_path=model_save_path)
-    # print("Predict some pictures...")
+    df_losses_metrics_path = os.path.join(model_save_path,"losses_metrics.csv")
+    plot_losses_metrics(df_losses_metrics_path= df_losses_metrics_path,
+                        model_save_path=model_save_path)
+    print("Predict some pictures...")
     predict(model = model,
             model_save_path= model_save_path,
             test_dataset= test_dataset,

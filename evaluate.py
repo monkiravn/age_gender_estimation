@@ -108,11 +108,11 @@ def predict(model,model_save_path,test_dataset,device, num_predicts = 20):
         plt.imshow((image.numpy().transpose((1, 2, 0))*255).astype(np.uint8))
         gender = "M" if gender.item() == 1.0 else "FM"
         gender_hat = torch.argmax(gender_hat).item()
-        gender_hat = "M" if gender_hat == 1 else "FM"
+        #gender_hat = "M" if gender_hat == 1 else "FM"
         #age = int(age.mul_(100).item())
         age = int(age.item())
         age_hat = torch.argmax(age_hat).item()
-        pre_str = str(age_hat) + "," + gender_hat
+        pre_str = str(age_hat) + "," + str(gender_hat)
         actual_str = str(age) + "," + gender
         textstr = 'Predict: ' + pre_str + '\nActual: ' + actual_str
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)

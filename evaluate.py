@@ -110,7 +110,7 @@ def predict(model,model_save_path,test_dataset,device, num_predicts = 20):
         gender_hat = torch.argmax(gender_hat).item()
         gender_hat = "M" if gender_hat == 1 else "FM"
         age = int(age.mul_(100).item())
-        age_hat = int(age_hat.mul_(100).item())
+        age_hat = int(age_hat.mul_(100))
         pre_str = str(age_hat) + "," + gender_hat
         actual_str = str(age) + "," + gender
         textstr = '\n' + 'Predict: ' + pre_str + '\nActual: ' + actual_str

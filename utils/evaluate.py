@@ -13,6 +13,7 @@ from torch import nn
 import argparse as argparse
 import random
 
+
 def plot_losses_metrics(df_losses_metrics_path, model_save_path):
     df = pd.read_csv(df_losses_metrics_path)
     df['Epoch'] = df['index'].values + 1

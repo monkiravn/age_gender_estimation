@@ -8,7 +8,7 @@ from ultils.transfroms import RGB_ToTensor,Normalization
 from ultils.datasets import ImdbDataset
 from torch.utils.data import DataLoader
 from ultils.metrics import Accuracy, MeanAbsoluteError
-from ultils.model import Resnet
+from ultils.model import ResnetV3
 from torch import nn
 import argparse as argparse
 
@@ -99,7 +99,7 @@ def evaluate_test_set(model,criterion1,criterion2,df_test_path, dt_root_path,dev
 def main(model_save_path, df_test_path, dt_root_path):
     checkpoint = torch.load(os.path.join(model_save_path, "best_checkpoint.tar"), map_location='cpu')
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    model = Resnet().to(device)
+    model = ResnetV3().to(device)
     # For binary output:gender
     criterion_binary = nn.NLLLoss()
     # For multilabel output: and age

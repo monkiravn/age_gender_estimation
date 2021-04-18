@@ -444,7 +444,11 @@ def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rat
         print("Train from 2th-layer....")
         for param in model.features0.parameters():
             param.requires_grad = False
+
         for param in model.features2.parameters():
+            param.requires_grad = False
+
+        for param in model.fc2.parameters():
             param.requires_grad = False
 
         optimizer = optim.Adam(model.parameters(), lr=learning_rate, amsgrad=True)

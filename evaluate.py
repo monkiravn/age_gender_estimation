@@ -25,7 +25,7 @@ def plot_losses_metrics(df_losses_metrics_path, model_save_path):
     plt.title("Loss")
     plt.legend()
     plt.savefig(os.path.join(model_save_path,"losses.jpg"))
-    plt.show()
+    #plt.show()
 
     plt.figure(2, figsize=(10, 5))
     sns.lineplot(data=df, x="Epoch", y='train_age_mae', legend="full", label = "Train Age MAE")
@@ -33,7 +33,7 @@ def plot_losses_metrics(df_losses_metrics_path, model_save_path):
     plt.title("Age MAE")
     plt.legend()
     plt.savefig(os.path.join(model_save_path, "age_maes.jpg"))
-    plt.show()
+    #plt.show()
 
     # plt.figure(3, figsize=(10, 5))
     # sns.lineplot(data=df, x="Epoch", y='train_age_acc', legend="full", label = "Train Age Accuracy")
@@ -49,7 +49,7 @@ def plot_losses_metrics(df_losses_metrics_path, model_save_path):
     plt.title("Gender Accuracy")
     plt.legend()
     plt.savefig(os.path.join(model_save_path, "gender_accs.jpg"))
-    plt.show()
+    #plt.show()
 
 
 def evaluate_test_set(model,criterion,test_dataloader,device):

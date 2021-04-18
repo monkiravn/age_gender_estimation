@@ -16,6 +16,7 @@ import random
 
 def plot_losses_metrics(df_losses_metrics_path, model_save_path):
     df = pd.read_csv(df_losses_metrics_path)
+    df.rename(columns={'Unnamed: 0': "index"}, inplace=True)
     df['Epoch'] = df['index'].values + 1
     plt.figure(1,figsize=(10,5))
     sns.lineplot(data=df,x="Epoch",y='loss',legend="full", label = "Train loss")

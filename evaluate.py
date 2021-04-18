@@ -116,7 +116,7 @@ def predict(model,model_save_path,test_dataset,device, num_predicts = 20):
         actual_str = str(age) + "," + gender
         textstr = '\n' + 'Predict: ' + pre_str + '\nActual: ' + actual_str
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
-        ax.text(0.05, 0.95, textstr, transform=ax.transAxes, fontsize=14,
+        ax.text(0.05, 0.95, textstr, fontsize=14,
                 verticalalignment='top', bbox=props)
         plt.axis('off')
         figname = str(age_hat) + "_" + gender_hat + "_" + str(age) + "_" + gender + ".jpg"

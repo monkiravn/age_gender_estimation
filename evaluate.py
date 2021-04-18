@@ -148,10 +148,10 @@ def main(model_save_path, df_test_path, dt_root_path, batch_size=256):
     #                   test_dataloader = test_dataloader,
     #                   device=device)
     print("Plotting........")
-    df_losses_metrics_path = os.path.join(model_save_path,"losses_metrics.csv")
-    plot_losses_metrics(df_losses_metrics_path= df_losses_metrics_path,
-                        model_save_path=model_save_path)
-    print("Predict some pictures...")
+    # df_losses_metrics_path = os.path.join(model_save_path,"losses_metrics.csv")
+    # plot_losses_metrics(df_losses_metrics_path= df_losses_metrics_path,
+    #                     model_save_path=model_save_path)
+    # print("Predict some pictures...")
     predict(model = model,
             model_save_path= model_save_path,
             test_dataset= test_dataset,

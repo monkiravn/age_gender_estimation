@@ -100,7 +100,7 @@ def predict(model,model_save_path,test_dataset,device, num_predicts = 20):
         index = random.randint(0,10000)
         sample = test_dataset[index]
         image, age, gender = sample['image'], sample['label_age'], sample['label_gender']
-        image_pre = torch.unsqueeze(image, 0).to(device)
+        image_pre = torch.unsqueeze(image, 0).to(device,dtype=torch.float)
         output = model(image_pre)
         age_hat = output['label1']
         gender_hat = output['label2']

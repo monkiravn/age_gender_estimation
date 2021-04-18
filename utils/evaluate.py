@@ -4,11 +4,11 @@ import seaborn as sns
 import torch
 import os
 from torchvision import  transforms
-from ultils.transfroms import RGB_ToTensor,Normalization
-from ultils.datasets import ImdbDataset
+from .transfroms import RGB_ToTensor,Normalization
+from .datasets import ImdbDataset
 from torch.utils.data import DataLoader
-from ultils.metrics import Accuracy, MeanAbsoluteError
-from ultils.model import ResnetV3, ResnetV2
+from .metrics import Accuracy, MeanAbsoluteError
+from .model import ResnetV3, ResnetV2
 from torch import nn
 import argparse as argparse
 import random

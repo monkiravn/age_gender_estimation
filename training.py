@@ -2,12 +2,12 @@ import numpy as np
 import pandas as pd
 import torch
 import os
-from ultils.datasets import ImdbDataset
-from ultils.loss import MultiTaskLossWrapper,Classify_Loss
-from ultils.model import inception_V3, Densenet, ResnetV1,ResnetV2, ResnetV3
-from ultils.transfroms import Rotate_Image, RGB_ToTensor, Normalization, Resize
+from utils.datasets import ImdbDataset
+from utils.loss import MultiTaskLossWrapper,Classify_Loss
+from utils.model import inception_V3, Densenet, ResnetV1,ResnetV2, ResnetV3
+from utils.transfroms import Rotate_Image, RGB_ToTensor, Normalization, Resize
 from torch.utils.data import DataLoader
-from ultils.metrics import Accuracy, MeanAbsoluteError
+from utils.metrics import Accuracy, MeanAbsoluteError
 from torchvision import transforms
 from torch import nn, optim
 from torch.optim.lr_scheduler import StepLR

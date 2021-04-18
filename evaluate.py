@@ -91,7 +91,7 @@ def evaluate_test_set(model,criterion,test_dataloader,device):
         print("*****\nTest loss: {:.6f}"
               "\nTest Age MAE: {:.4f}"              
               "\nTest Gender Accuracy: {:.4f}"
-              "*****\n".format(test_loss/len(test_dataloader),test_age_mae/len(test_dataloader),
+              "\n*****".format(test_loss/len(test_dataloader),test_age_mae/len(test_dataloader),
                                                       test_gender_acc/len(test_dataloader)))
 
 

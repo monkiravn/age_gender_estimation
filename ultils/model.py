@@ -87,6 +87,7 @@ class ResnetV3(nn.Module):
         x2 = self.features2(x)
         x1 = F.adaptive_avg_pool2d(x1, 1).reshape(bs, -1)
         x2 = F.adaptive_avg_pool2d(x2, 1).reshape(bs, -1)
+
         label1 = self.fc1(x1)
         label2 = self.apply_log_soft(self.fc2(x2))
         return {'label1': label1, 'label2': label2}

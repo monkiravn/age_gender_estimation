@@ -12,7 +12,7 @@ from utils.model import ResnetV3, ResnetV2
 from torch import nn
 import argparse as argparse
 import random
-
+import numpy as np
 
 def plot_losses_metrics(df_losses_metrics_path, model_save_path):
     df = pd.read_csv(df_losses_metrics_path)
@@ -105,7 +105,7 @@ def predict(model,model_save_path,test_dataset,device, num_predicts = 20):
         age_hat = output['label1']
         gender_hat = output['label2']
         ax = plt.figure(figsize=(10,10))
-        plt.imshow(image.numpy().transpose((1, 2, 0)))
+        plt.imshow(image.numpy().transpose((1, 2, 0)) * 255).astype(np.uint8)
         gender = "M" if gender.item() == 1.0 else "FM"
         gender_hat = torch.argmax(gender_hat).item()
         gender_hat = "M" if gender_hat == 1 else "FM"
@@ -114,7 +114,7 @@ def predict(model,model_save_path,test_dataset,device, num_predicts = 20):
         age_hat = torch.argmax(age_hat).item()
         pre_str = str(age_hat) + "," + gender_hat
         actual_str = str(age) + "," + gender
-        textstr = '\n' + 'Predict: ' + pre_str + '\nActual: ' + actual_str
+        textstr = 'Predict: ' + pre_str + '\nActual: ' + actual_str
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
         ax.text(0.05, 0.95, textstr, fontsize=14,
                 verticalalignment='top', bbox=props)

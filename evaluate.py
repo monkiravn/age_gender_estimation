@@ -119,7 +119,7 @@ def predict(model,model_save_path,test_dataset,device, num_predicts = 20):
         ax.text(0.05, 0.95, textstr, fontsize=14,
                 verticalalignment='top', bbox=props)
         plt.axis('off')
-        figname = str(age_hat) + "_" + gender_hat + "_" + str(age) + "_" + gender + ".jpg"
+        figname = str(age_hat) + "_" + str(gender_hat) + "_" + str(age) + "_" + gender + ".jpg"
         plt.savefig(os.path.join(model_save_path,figname))
 
 

@@ -142,11 +142,11 @@ def main(model_save_path, df_test_path, dt_root_path, batch_size=256):
     criterion_multioutput = nn.NLLLoss()
     model.load_state_dict(checkpoint['model_state_dict'])
     print("Evaluating........")
-    evaluate_test_set(model = model,
-                      criterion1=criterion_multioutput,
-                      criterion2=criterion_binary,
-                      test_dataloader = test_dataloader,
-                      device=device)
+    # evaluate_test_set(model = model,
+    #                   criterion1=criterion_multioutput,
+    #                   criterion2=criterion_binary,
+    #                   test_dataloader = test_dataloader,
+    #                   device=device)
     print("Plotting........")
     df_losses_metrics_path = os.path.join(model_save_path,"losses_metrics.csv")
     plot_losses_metrics(df_losses_metrics_path= df_losses_metrics_path,

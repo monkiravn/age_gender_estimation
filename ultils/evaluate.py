@@ -8,9 +8,10 @@ from ultils.transfroms import RGB_ToTensor,Normalization
 from ultils.datasets import ImdbDataset
 from torch.utils.data import DataLoader
 from ultils.metrics import Accuracy, MeanAbsoluteError
-from ultils.model import ResnetV3
+from ultils.model import ResnetV3, ResnetV2
 from torch import nn
 import argparse as argparse
+import random
 
 def plot_losses_metrics(df_losses_metrics_path, model_save_path):
     df = pd.read_csv(df_losses_metrics_path)
@@ -47,15 +48,8 @@ def plot_losses_metrics(df_losses_metrics_path, model_save_path):
     plt.savefig(os.path.join(model_save_path, "gender_accs.jpg"))
     plt.show()
 
-def evaluate_test_set(model,criterion1,criterion2,df_test_path, dt_root_path,device,batch_size=256):
-    cnn_normalization_mean = torch.tensor([0.485, 0.456, 0.406])
-    cnn_normalization_std = torch.tensor([0.229, 0.224, 0.225])
-    test_transforms = transforms.Compose([
-        RGB_ToTensor(),
-        Normalization(cnn_normalization_mean, cnn_normalization_std)])
 
-    test_dataset = ImdbDataset(dataframe_path=df_test_path, data_root_path=dt_root_path, transform=test_transforms)
-    test_dataloader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True, num_workers=2)
+def evaluate_test_set(model,criterion1,criterion2,test_dataloader,device):
 
     # validate the model #
     model.eval()
@@ -96,10 +90,50 @@ def evaluate_test_set(model,criterion1,criterion2,df_test_path, dt_root_path,dev
               "\nTest Gender Accuracy: {:.4f}".format(test_loss/len(test_dataloader),test_age_mae/len(test_dataloader),
                                                       test_age_acc/len(test_dataloader),test_gender_acc/len(test_dataloader)))
 
-def main(model_save_path, df_test_path, dt_root_path):
+
+
+
+def predict(model,model_save_path,test_dataset,device, num_predicts = 20):
+    for i in range(num_predicts):
+        index = random.randint(0,10000)
+        sample = test_dataset[index]
+        image, age, gender = sample['image'], sample['label_age'], sample['label_gender']
+        image_pre = torch.unsqueeze(image, 0).to(device)
+        output = model(image_pre)
+        age_hat = output['label1']
+        gender_hat = output['label2']
+        ax = plt.figure(figsize=(10,10))
+        plt.imshow(image.numpy().transpose((1, 2, 0))*255)
+        gender = "M" if gender.item() == 1.0 else "FM"
+        gender_hat = torch.argmax(gender_hat).item()
+        gender_hat = "M" if gender_hat == 1 else "FM"
+        age = int(age.mul_(100).item())
+        age_hat = int(age_hat.mul_(100).item())
+        pre_str = str(age_hat) + "," + gender_hat
+        actual_str = str(age) + "," + gender
+        textstr = '\n' + 'Predict: ' + pre_str + '\nActual: ' + actual_str
+        props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+        ax.text(0.05, 0.95, textstr, transform=ax.transAxes, fontsize=14,
+                verticalalignment='top', bbox=props)
+        plt.axis('off')
+        figname = str(age_hat) + "_" + gender_hat + "_" + str(age) + "_" + gender + ".jpg"
+        plt.savefig(os.path.join(model_save_path,figname))
+
+
+def main(model_save_path, df_test_path, dt_root_path, batch_size=256):
+    cnn_normalization_mean = torch.tensor([0.485, 0.456, 0.406])
+    cnn_normalization_std = torch.tensor([0.229, 0.224, 0.225])
+    test_transforms = transforms.Compose([
+        RGB_ToTensor(),
+        # Normalization(cnn_normalization_mean, cnn_normalization_std)
+    ])
+
+    test_dataset = ImdbDataset(dataframe_path=df_test_path, data_root_path=dt_root_path, transform=test_transforms)
+    test_dataloader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True, num_workers=2)
+
     checkpoint = torch.load(os.path.join(model_save_path, "best_checkpoint.tar"), map_location='cpu')
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    model = ResnetV3().to(device)
+    model = ResnetV2().to(device)
     # For binary output:gender
     criterion_binary = nn.NLLLoss()
     # For multilabel output: and age
@@ -109,14 +143,20 @@ def main(model_save_path, df_test_path, dt_root_path):
     evaluate_test_set(model = model,
                       criterion1=criterion_multioutput,
                       criterion2=criterion_binary,
-                      df_test_path=df_test_path,
-                      dt_root_path= dt_root_path,
-                      device=device,
-                      batch_size=256)
+                      test_dataloader = test_dataloader,
+                      device=device)
     print("Plotting........")
     df_losses_metrics_path = os.path.join(model_save_path,"losses_metrics.csv")
     plot_losses_metrics(df_losses_metrics_path= df_losses_metrics_path,
                         model_save_path=model_save_path)
+    print("Predict some pictures...")
+    predict(model = model,
+            model_save_path= model_save_path,
+            test_dataset= test_dataset,
+            device=device,
+            num_predicts=10)
+
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

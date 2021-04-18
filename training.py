@@ -4,7 +4,7 @@ import torch
 import os
 from ultils.datasets import ImdbDataset
 from ultils.loss import MultiTaskLossWrapper,Classify_Loss
-from ultils.model import inception_V3, Densenet, ResnetV1,ResnetV2
+from ultils.model import inception_V3, Densenet, ResnetV1,ResnetV2, ResnetV3
 from ultils.transfroms import Rotate_Image, RGB_ToTensor, Normalization, Resize
 from torch.utils.data import DataLoader
 from ultils.metrics import Accuracy, MeanAbsoluteError
@@ -16,7 +16,7 @@ import argparse as argparse
 
 def train_model(model,model_save_path,train_dataloader, test_dataloader, device, criterion, optimizer, n_epochs=25, continous_training = False):
     """returns trained model"""
-    scheduler = StepLR(optimizer, step_size=50, gamma=0.8, verbose=True)
+    scheduler = StepLR(optimizer, step_size=10, gamma=0.8, verbose=True)
     if continous_training == True:
         print("Load check point....")
         checkpoint = torch.load(os.path.join(model_save_path, "latest_checkpoint.tar"), map_location='cpu')
@@ -46,7 +46,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
             epoch_gender_acc = 0.0
             for batch_idx, sample_batched in enumerate(train_dataloader):
                 # importing data and moving to GPU
-                image, label1, label2= sample_batched['image'].to(device,dtype=torch.float), sample_batched['label_age'].to(device,dtype=torch.long),  \
+                image, label1, label2= sample_batched['image'].to(device,dtype=torch.float), sample_batched['label_age'].to(device,dtype=torch.float),  \
                                        sample_batched['label_gender'].to(device,dtype=torch.long)
 
                 # zero the parameter gradients
@@ -61,7 +61,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                 gender_Accuracy = Accuracy()(label2_hat, label2.squeeze())
 
                 # calculate loss
-                loss = criterion(label1_hat,label2_hat,label1.squeeze(),label2.squeeze())
+                loss = criterion(label1_hat,label2_hat,label1,label2)
                 # loss1 = criterion1(label1_hat, label1)
                 # loss2 = criterion2(label2_hat, label2.squeeze())
 
@@ -111,7 +111,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
             with torch.no_grad():
                 for batch_idx, sample_batched in enumerate(test_dataloader):
                     image, label1, label2 = sample_batched['image'].to(device,dtype=torch.float), \
-                                                    sample_batched['label_age'].to(device,dtype=torch.long), \
+                                                    sample_batched['label_age'].to(device,dtype=torch.float), \
                                                     sample_batched['label_gender'].to(device,dtype=torch.long)
                     output = model(image)
                     label1_hat = output['label1'].cuda()
@@ -123,7 +123,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                     gender_Accuracy = Accuracy()(label2_hat, label2.squeeze())
 
                     # calculate loss
-                    loss = criterion(label1_hat,label2_hat,label1.squeeze(),label2.squeeze())
+                    loss = criterion(label1_hat,label2_hat,label1,label2)
                     # loss1 = criterion1(label1_hat, label1)
                     # loss2 = criterion2(label2_hat, label2.squeeze())
 
@@ -211,7 +211,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
             for batch_idx, sample_batched in enumerate(train_dataloader):
                 # importing data and moving to GPU
                 image, label1, label2 = sample_batched['image'].to(device, dtype=torch.float), sample_batched[
-                    'label_age'].to(device, dtype=torch.long), \
+                    'label_age'].to(device, dtype=torch.float), \
                                         sample_batched['label_gender'].to(device, dtype=torch.long)
 
                 # zero the parameter gradients
@@ -226,7 +226,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                 gender_Accuracy = Accuracy()(label2_hat, label2.squeeze())
 
                 # calculate loss
-                loss = criterion(label1_hat,label2_hat,label1.squeeze(),label2.squeeze())
+                loss = criterion(label1_hat,label2_hat,label1,label2)
                 # loss1 = criterion1(label1_hat, label1)
                 # loss2 = criterion2(label2_hat, label2.squeeze())
 
@@ -277,7 +277,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
             with torch.no_grad():
                 for batch_idx, sample_batched in enumerate(test_dataloader):
                     image, label1, label2 = sample_batched['image'].to(device, dtype=torch.float), \
-                                            sample_batched['label_age'].to(device, dtype=torch.long), \
+                                            sample_batched['label_age'].to(device, dtype=torch.float), \
                                             sample_batched['label_gender'].to(device, dtype=torch.long)
                     output = model(image)
                     label1_hat = output['label1'].cuda()
@@ -289,7 +289,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
                     gender_Accuracy = Accuracy()(label2_hat, label2.squeeze())
 
                     # calculate loss
-                    loss = criterion(label1_hat,label2_hat,label1.squeeze(),label2.squeeze())
+                    loss = criterion(label1_hat,label2_hat,label1,label2)
                     # loss1 = criterion1(label1_hat, label1)
                     # loss2 = criterion2(label2_hat, label2.squeeze())
 
@@ -363,6 +363,7 @@ def train_model(model,model_save_path,train_dataloader, test_dataloader, device,
     return model
 
 
+
 def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rate, epochs, batch_size, train_mode = "full", continous_training=False):
 
     cnn_normalization_mean = torch.tensor([0.485, 0.456, 0.406])
@@ -391,19 +392,25 @@ def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rat
 
 
     #Setting model and moving to device
-    model = ResnetV2().to(device)
+    model = ResnetV3().to(device)
     # #For binary output:gender
     # criterion_gender =  nn.NLLLoss()
     # #For multilabel output: and age
     # #criterion_multioutput = nn.NLLLoss()
     # criterion_age = nn.MSELoss()
     criterion = MultiTaskLossWrapper(2)
-    criterion = Classify_Loss(weight=[6,0.2])
+    #criterion = Classify_Loss(weight=[6,0.2])
 
     if train_mode == "top":
         print("Train only top layers....")
-        for param in model.features.parameters():
+
+        for param in model.features0.parameters():
             param.requires_grad = False
+        for param in model.features1.parameters():
+            param.requires_grad = False
+        for param in model.features2.parameters():
+            param.requires_grad = False
+
         optimizer = optim.Adam(model.parameters(), lr=learning_rate*2, amsgrad=True)
         model_history = train_model(model=model,
                                     model_save_path=model_save_path,
@@ -416,9 +423,28 @@ def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rat
                                     optimizer=optimizer,
                                     n_epochs=5,
                                     continous_training=continous_training)
-    elif train_mode =="custom":
+    elif train_mode =="custom_both":
         print("Train from 2th-layer....")
-        for param in model.features[:5].parameters():
+        for param in model.features0.parameters():
+            param.requires_grad = False
+
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate, amsgrad=True)
+        model_history = train_model(model=model,
+                                    model_save_path=model_save_path,
+                                    train_dataloader=train_dataloader,
+                                    test_dataloader=test_dataloader,
+                                    device=device,
+                                    criterion = criterion,
+                                    # criterion1=criterion_age,
+                                    # criterion2=criterion_gender,
+                                    optimizer=optimizer,
+                                    n_epochs=epochs,
+                                    continous_training=continous_training)
+    elif train_mode =="only_age":
+        print("Train from 2th-layer....")
+        for param in model.features0.parameters():
+            param.requires_grad = False
+        for param in model.features2.parameters():
             param.requires_grad = False
 
         optimizer = optim.Adam(model.parameters(), lr=learning_rate, amsgrad=True)

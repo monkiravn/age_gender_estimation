@@ -35,13 +35,13 @@ def plot_losses_metrics(df_losses_metrics_path, model_save_path):
     plt.savefig(os.path.join(model_save_path, "age_maes.jpg"))
     plt.show()
 
-    plt.figure(3, figsize=(10, 5))
-    sns.lineplot(data=df, x="Epoch", y='train_age_acc', legend="full", label = "Train Age Accuracy")
-    sns.lineplot(data=df, x="Epoch", y='val_age_acc', legend="full", label = "Val Age Accuracy")
-    plt.title("Age Accuracy")
-    plt.legend()
-    plt.savefig(os.path.join(model_save_path, "age_accs.jpg"))
-    plt.show()
+    # plt.figure(3, figsize=(10, 5))
+    # sns.lineplot(data=df, x="Epoch", y='train_age_acc', legend="full", label = "Train Age Accuracy")
+    # sns.lineplot(data=df, x="Epoch", y='val_age_acc', legend="full", label = "Val Age Accuracy")
+    # plt.title("Age Accuracy")
+    # plt.legend()
+    # plt.savefig(os.path.join(model_save_path, "age_accs.jpg"))
+    # plt.show()
 
     plt.figure(4, figsize=(10, 5))
     sns.lineplot(data=df, x="Epoch", y='train_gender_acc', legend="full", label = "Train Gender Accuracy")
@@ -89,10 +89,9 @@ def evaluate_test_set(model,criterion,test_dataloader,device):
             test_gender_acc += gender_Accuracy.item()
 
         print("*****\nTest loss: {:.6f}"
-              "\nTest Age MAE: {:.4f}"
-              "\nTest Age Accuracy: {:.4f}"
+              "\nTest Age MAE: {:.4f}"              
               "\nTest Gender Accuracy: {:.4f}".format(test_loss/len(test_dataloader),test_age_mae/len(test_dataloader),
-                                                      test_age_acc/len(test_dataloader),test_gender_acc/len(test_dataloader)))
+                                                      test_gender_acc/len(test_dataloader)))
 
 
 

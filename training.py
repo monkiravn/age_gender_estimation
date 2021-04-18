@@ -441,7 +441,7 @@ def main(df_train_path, df_test_path,data_root_path,model_save_path,learning_rat
                                     n_epochs=epochs,
                                     continous_training=continous_training)
     elif train_mode =="only_age":
-        print("Train from 2th-layer....")
+        print("Training only age....")
         for param in model.features0.parameters():
             param.requires_grad = False
 
